@@ -434,8 +434,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 // ═══════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════
-const DRIVE_FILE_ID = '1LSIRMzmom7drlacZ2zceSS-xMHbSz4Mm';
-const OAUTH_CLIENT_ID = '116535707214-6ik543658e53ophuffhpdu220gluoehi.apps.googleusercontent.com';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyJ-1VOnLfim73E5ecgQ8S2EY1x7P8mszsaMkr29j1YqZaByNGdmXCFFAdVNBpe9dmR/exec';
+// OAuth replaced by Google Apps Script
 
 // ═══════════════════════════════════════════════
 // CATEGORIES
@@ -541,80 +541,33 @@ function applyUser(u){
 // ═══════════════════════════════════════════════
 // DRIVE
 // ═══════════════════════════════════════════════
-function getToken(){ return localStorage.getItem('d205_token'); }
-function clearToken(){ localStorage.removeItem('d205_token'); }
+function getToken(){ return true; } // GAS handles auth
+function clearToken(){ } // not needed with GAS
 
 async function driveGet(){
-  const t=getToken(); if(!t) return null;
   try{
-    const r=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,
-      {headers:{'Authorization':'Bearer '+t}});
-    if(r.status===401){clearToken();return null;}
+    const r=await fetch(GAS_URL, {redirect:'follow'});
     if(!r.ok) return null;
     return await r.json();
   }catch(e){return null;}
 }
 
 async function drivePut(payload){
-  const t=getToken(); if(!t) return false;
   try{
-    const r=await fetch(
-      `https://www.googleapis.com/upload/drive/v3/files/${DRIVE_FILE_ID}?uploadType=media`,
-      {method:'PATCH',headers:{'Authorization':'Bearer '+t,'Content-Type':'application/json'},
-       body:JSON.stringify(payload)});
-    if(r.status===401){clearToken();return false;}
+    const r=await fetch(GAS_URL, {
+      method:'POST',
+      body:JSON.stringify(payload),
+      headers:{'Content-Type':'text/plain'}, // GAS requires text/plain for doPost
+      redirect:'follow'
+    });
     return r.ok;
   }catch(e){return false;}
 }
 
-// Google Identity Services — popup mode, no redirect loop
-let gisClient = null;
-
-function initGIS(){
-  if(!OAUTH_CLIENT_ID) return;
-  // Load GIS script if not already loaded
-  if(!window.google || !window.google.accounts){
-    const s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.onload = () => setupGIS();
-    document.head.appendChild(s);
-  } else {
-    setupGIS();
-  }
-}
-
-function setupGIS(){
-  gisClient = google.accounts.oauth2.initTokenClient({
-    client_id: OAUTH_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/drive.file',
-    callback: (response) => {
-      if(response.access_token){
-        localStorage.setItem('d205_token', response.access_token);
-        fallback = false;
-        showToast('✓ Conectado con Drive');
-        loadData();
-      } else {
-        showToast('⚠ No se pudo conectar con Drive','#f87171');
-        useFallback();
-      }
-    },
-  });
-}
-
-function startOAuth(){
-  if(!OAUTH_CLIENT_ID){ useFallback(); return; }
-  if(gisClient){
-    gisClient.requestAccessToken();
-  } else {
-    initGIS();
-    // Wait for script to load then request
-    setTimeout(()=>{ if(gisClient) gisClient.requestAccessToken(); else useFallback(); }, 2000);
-  }
-}
-
-function parseOAuthHash(){
-  return false; // No longer using redirect flow
-}
+// Auth replaced by Google Apps Script — no OAuth needed
+function initGIS(){ /* not needed */ }
+function startOAuth(){ loadData(); }
+function parseOAuthHash(){ return false; }
 
 function useFallback(){
   fallback=true;
@@ -629,24 +582,16 @@ function saveFallback(){ try{localStorage.setItem('d205_data',JSON.stringify({ex
 
 async function loadData(){
   showLoad('Cargando datos de Drive…');
-  if(!getToken()){
-    hideLoad();
-    if(OAUTH_CLIENT_ID){
-      startOAuth(); // redirect to Google login
-    } else {
-      useFallback();
-    }
-    return;
-  }
-  const data=await driveGet();
+  const data = await driveGet();
   if(data){
-    expenses=prune(normalizeAll(data.expenses||[]));
-    fallback=false;
+    expenses = prune(normalizeAll(data.expenses||[]));
+    fallback = false;
+    renderAll();
+    hideLoad();
   } else {
-    // Token might be expired — try re-auth
-    if(OAUTH_CLIENT_ID){ hideLoad(); startOAuth(); return; }
+    hideLoad();
+    useFallback();
   }
-  renderAll(); hideLoad();
 }
 
 async function saveData(){
@@ -662,21 +607,15 @@ async function saveData(){
 function schedSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveData,700); }
 
 async function syncNow(){
-  // If no token, trigger OAuth regardless of fallback mode
-  if(!getToken()){
-    fallback=false;
-    startOAuth();
-    return;
-  }
   showLoad('Sincronizando con Drive…');
-  const data=await driveGet();
+  const data = await driveGet();
   if(data){
-    expenses=prune(normalizeAll(data.expenses||[]));
-    fallback=false;
+    expenses = prune(normalizeAll(data.expenses||[]));
+    fallback = false;
     renderAll();
     showToast('✓ Sincronizado con Drive');
   } else {
-    showToast('⚠ No se pudo conectar con Drive','#f87171');
+    showToast('⚠ Sin conexión con Drive','#f87171');
   }
   hideLoad();
 }
@@ -1163,9 +1102,6 @@ function showToast(msg,color,dur){
 // ═══════════════════════════════════════════════
 // STARTUP
 // ═══════════════════════════════════════════════
-// Init GIS on page load so it's ready when needed
-if(OAUTH_CLIENT_ID) initGIS();
-
 if(user){document.getElementById('authScreen').style.display='none';applyUser(user);loadData();}
 </script>
 </body>
