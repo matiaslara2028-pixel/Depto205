@@ -567,21 +567,53 @@ async function drivePut(payload){
   }catch(e){return false;}
 }
 
-function startOAuth(){
-  if(!OAUTH_CLIENT_ID){useFallback();return;}
-  const p=new URLSearchParams({
-    client_id:OAUTH_CLIENT_ID, redirect_uri:location.origin+location.pathname,
-    response_type:'token', scope:'https://www.googleapis.com/auth/drive.file', prompt:'consent',
+// Google Identity Services — popup mode, no redirect loop
+let gisClient = null;
+
+function initGIS(){
+  if(!OAUTH_CLIENT_ID) return;
+  // Load GIS script if not already loaded
+  if(!window.google || !window.google.accounts){
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = () => setupGIS();
+    document.head.appendChild(s);
+  } else {
+    setupGIS();
+  }
+}
+
+function setupGIS(){
+  gisClient = google.accounts.oauth2.initTokenClient({
+    client_id: OAUTH_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    callback: (response) => {
+      if(response.access_token){
+        localStorage.setItem('d205_token', response.access_token);
+        fallback = false;
+        showToast('✓ Conectado con Drive');
+        loadData();
+      } else {
+        showToast('⚠ No se pudo conectar con Drive','#f87171');
+        useFallback();
+      }
+    },
   });
-  location.href='https://accounts.google.com/o/oauth2/v2/auth?'+p;
+}
+
+function startOAuth(){
+  if(!OAUTH_CLIENT_ID){ useFallback(); return; }
+  if(gisClient){
+    gisClient.requestAccessToken();
+  } else {
+    initGIS();
+    // Wait for script to load then request
+    setTimeout(()=>{ if(gisClient) gisClient.requestAccessToken(); else useFallback(); }, 2000);
+  }
 }
 
 function parseOAuthHash(){
-  if(!location.hash) return false;
-  const p=new URLSearchParams(location.hash.slice(1));
-  const t=p.get('access_token');
-  if(t){localStorage.setItem('d205_token',t);history.replaceState(null,'',location.pathname);return true;}
-  return false;
+  return false; // No longer using redirect flow
 }
 
 function useFallback(){
@@ -1131,7 +1163,9 @@ function showToast(msg,color,dur){
 // ═══════════════════════════════════════════════
 // STARTUP
 // ═══════════════════════════════════════════════
-parseOAuthHash();
+// Init GIS on page load so it's ready when needed
+if(OAUTH_CLIENT_ID) initGIS();
+
 if(user){document.getElementById('authScreen').style.display='none';applyUser(user);loadData();}
 </script>
 </body>
