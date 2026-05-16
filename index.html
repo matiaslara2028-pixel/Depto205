@@ -435,7 +435,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 // CONFIG
 // ═══════════════════════════════════════════════
 const DRIVE_FILE_ID = '1LSIRMzmom7drlacZ2zceSS-xMHbSz4Mm';
-const OAUTH_CLIENT_ID = ''; // pegar aquí tu Client ID de Google OAuth
+const OAUTH_CLIENT_ID = '116535707214-6ik543658e53ophuffhpdu220gluoehi.apps.googleusercontent.com';
 
 // ═══════════════════════════════════════════════
 // CATEGORIES
@@ -597,9 +597,23 @@ function saveFallback(){ try{localStorage.setItem('d205_data',JSON.stringify({ex
 
 async function loadData(){
   showLoad('Cargando datos de Drive…');
-  if(!getToken()){hideLoad(); if(OAUTH_CLIENT_ID) startOAuth(); else useFallback(); return;}
+  if(!getToken()){
+    hideLoad();
+    if(OAUTH_CLIENT_ID){
+      startOAuth(); // redirect to Google login
+    } else {
+      useFallback();
+    }
+    return;
+  }
   const data=await driveGet();
-  if(data) expenses=prune(normalizeAll(data.expenses||[]));
+  if(data){
+    expenses=prune(normalizeAll(data.expenses||[]));
+    fallback=false;
+  } else {
+    // Token might be expired — try re-auth
+    if(OAUTH_CLIENT_ID){ hideLoad(); startOAuth(); return; }
+  }
   renderAll(); hideLoad();
 }
 
@@ -616,11 +630,23 @@ async function saveData(){
 function schedSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveData,700); }
 
 async function syncNow(){
-  if(fallback){showToast('Modo local activo','#f5c542');return;}
-  showLoad('Sincronizando…');
+  // If no token, trigger OAuth regardless of fallback mode
+  if(!getToken()){
+    fallback=false;
+    startOAuth();
+    return;
+  }
+  showLoad('Sincronizando con Drive…');
   const data=await driveGet();
-  if(data){expenses=prune(normalizeAll(data.expenses||[]));renderAll();}
-  hideLoad(); showToast('✓ Sincronizado');
+  if(data){
+    expenses=prune(normalizeAll(data.expenses||[]));
+    fallback=false;
+    renderAll();
+    showToast('✓ Sincronizado con Drive');
+  } else {
+    showToast('⚠ No se pudo conectar con Drive','#f87171');
+  }
+  hideLoad();
 }
 
 function setSyncSt(s){
