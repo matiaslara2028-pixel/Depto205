@@ -545,37 +545,33 @@ function getToken(){ return true; } // GAS handles auth
 function clearToken(){ } // not needed with GAS
 
 async function driveGet(){
-  return new Promise((resolve) => {
-    const cbName = 'gasCallback_' + Date.now();
-    const script = document.createElement('script');
-    const timeout = setTimeout(() => {
-      delete window[cbName];
-      document.body.removeChild(script);
-      resolve(null);
-    }, 8000);
-    window[cbName] = (data) => {
-      clearTimeout(timeout);
-      delete window[cbName];
-      document.body.removeChild(script);
-      resolve(data);
-    };
-    script.src = GAS_URL + '?callback=' + cbName + '&t=' + Date.now();
-    script.onerror = () => { clearTimeout(timeout); resolve(null); };
-    document.body.appendChild(script);
-  });
+  try{
+    // Use GAS with ?action=get — returns JSON with CORS headers via HTML service
+    const r = await fetch(GAS_URL + '?action=get', {
+      method: 'GET',
+      redirect: 'follow',
+      mode: 'cors',
+    });
+    if(!r.ok) return null;
+    const text = await r.text();
+    return JSON.parse(text);
+  }catch(e){
+    console.error('driveGet:', e);
+    return null;
+  }
 }
 
 async function drivePut(payload){
   try{
-    const body = JSON.stringify(payload);
-    const r = await fetch(GAS_URL, {
+    const r = await fetch(GAS_URL + '?action=post', {
       method: 'POST',
-      body: body,
+      body: JSON.stringify(payload),
       redirect: 'follow',
+      mode: 'cors',
     });
     return r.ok;
   }catch(e){
-    console.error('drivePut error:', e);
+    console.error('drivePut:', e);
     return false;
   }
 }
