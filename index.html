@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Depto 205">
+<title>Depto 205</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0d11;--surf:#17171f;--surf2:#1e1e28;--surf3:#252532;--border:#2a2a38;
+  --mati:#7c6fff;--vale:#ff6b8a;--ms:rgba(124,111,255,.13);--vs:rgba(255,107,138,.13);
+  --text:#eeeef5;--text2:#6b6b82;--text3:#9898b0;
+  --green:#3dd68c;--yellow:#f5c542;--red:#f87171;
+  --r:14px;
+}
+html,body{height:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-bottom:92px}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);z-index:400;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surf);border-radius:22px 22px 0 0;width:100%;max-width:440px;padding:20px 20px 32px;display:flex;flex-direction:column;gap:13px;max-height:88vh;overflow-y:auto}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto -4px}
+.modal-title{font-size:16px;font-weight:700;text-align:center;letter-spacing:-.2px}
+.modal input,.modal select{width:100%;background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;appearance:none}
+.modal input:focus,.modal select:focus{border-color:var(--mati)}
+.modal-row{display:flex;gap:8px}
+.modal-row .modal-field{flex:1}
+.modal-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:5px}
+.modal-actions{display:flex;gap:8px;margin-top:2px}
+.mbtn{flex:1;padding:13px;border-radius:12px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .18s}
+.mbtn.primary{background:var(--mati);color:#fff}
+.mbtn.danger{background:rgba(248,113,113,.13);color:var(--red);border:1px solid rgba(248,113,113,.28)}
+.mbtn.cancel{background:var(--surf2);color:var(--text3);border:1px solid var(--border)}
+.mbtn:active{transform:scale(.97)}
+
+/* ── AUTH ── */
+#authScreen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:18px}
+.auth-logo{font-size:52px}
+.auth-title{font-size:27px;font-weight:700;letter-spacing:-.5px}
+.auth-sub{font-size:14px;color:var(--text2);text-align:center;line-height:1.6;max-width:280px}
+.auth-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px}
+.auth-btn{padding:15px;border-radius:var(--r);border:2px solid;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .18s}
+.auth-btn.mati{background:var(--ms);border-color:var(--mati);color:var(--mati)}
+.auth-btn.vale{background:var(--vs);border-color:var(--vale);color:var(--vale)}
+.auth-btn:active{transform:scale(.97)}
+.auth-hint{font-size:11px;color:var(--text2);text-align:center;max-width:280px;line-height:1.6;padding:12px;background:var(--surf);border:1px solid var(--border);border-radius:12px}
+
+/* ── LOADING ── */
+#loadingOverlay{position:fixed;inset:0;background:rgba(13,13,17,.93);z-index:450;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--mati);border-radius:50%;animation:spin .65s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-txt{font-size:13px;color:var(--text2)}
+
+/* ── HEADER ── */
+.header{width:100%;max-width:440px;padding:50px 18px 10px}
+.hdr-top{display:flex;justify-content:space-between;align-items:center}
+.app-name{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text2)}
+.hdr-right{display:flex;align-items:center;gap:7px}
+.mbadge{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);background:var(--surf);border:1px solid var(--border);padding:4px 10px;border-radius:20px}
+.sync-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text2);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap}
+.sync-btn.syncing{color:var(--yellow);border-color:var(--yellow)}
+.sync-btn.ok{color:var(--green);border-color:var(--green)}
+.sync-btn.err{color:var(--red);border-color:var(--red)}
+.hdr-title{font-size:25px;font-weight:700;letter-spacing:-.4px;margin-top:6px}
+.upill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:4px;cursor:pointer;user-select:none}
+.upill.mati{background:var(--ms);color:var(--mati)}
+.upill.vale{background:var(--vs);color:var(--vale)}
+.upill .dot{width:6px;height:6px;border-radius:50%}
+.upill.mati .dot{background:var(--mati)}
+.upill.vale .dot{background:var(--vale)}
+.upill .chg{color:var(--text2);font-weight:400;font-size:11px;margin-left:2px}
+
+/* ── TABS ── */
+.tabs{width:100%;max-width:440px;padding:8px 18px 12px;display:flex;gap:6px;background:var(--bg);position:sticky;top:0;z-index:20}
+.tab{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border);background:var(--surf);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
+.tab.active{background:var(--mati);border-color:var(--mati);color:#fff}
+
+/* ── CONTENT ── */
+.content{width:100%;max-width:440px;padding:0 18px}
+
+/* ── ADD ── */
+.add-sec{display:flex;flex-direction:column;gap:12px}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:2px}
+.catgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.cat-btn{padding:9px 4px;border-radius:11px;border:1.5px solid var(--border);background:var(--surf);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .16s;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;line-height:1.2}
+.cat-btn .em{font-size:19px}
+.cat-btn.sel-m{border-color:var(--mati);background:var(--ms);color:var(--text)}
+.cat-btn.sel-v{border-color:var(--vale);background:var(--vs);color:var(--text)}
+.amt-box{background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r);padding:15px;display:flex;flex-direction:column;gap:8px}
+.amt-row{display:flex;align-items:center;gap:8px}
+.clabel{font-family:'DM Mono',monospace;font-size:17px;color:var(--text2)}
+.ainput{flex:1;background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--text);width:100%}
+.ainput::placeholder{color:var(--border)}
+.dinput{background:transparent;border:none;border-top:1px solid var(--border);outline:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text3);padding-top:9px;width:100%}
+.dinput::placeholder{color:var(--border)}
+.split-row{display:flex;align-items:center;justify-content:space-between;background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r);padding:12px 15px}
+.split-lbl{font-size:14px;font-weight:500}
+.split-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.toggle{width:42px;height:23px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
+.toggle.on{background:var(--mati)}
+.toggle::after{content:'';position:absolute;width:17px;height:17px;background:#fff;border-radius:9px;top:3px;left:3px;transition:transform .2s}
+.toggle.on::after{transform:translateX(19px)}
+.sub-btn{width:100%;padding:15px;border-radius:var(--r);border:none;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .18s}
+.sub-btn.mati{background:var(--mati);color:#fff}
+.sub-btn.vale{background:var(--vale);color:#fff}
+.sub-btn:active{transform:scale(.98);opacity:.9}
+
+/* ── GASTOS LIST ── */
+.elist{display:flex;flex-direction:column;gap:8px}
+.mg-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);padding:14px 0 6px;display:flex;align-items:center;gap:10px}
+.mg-line{flex:1;height:1px;background:var(--border)}
+.eitem{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:11px;animation:sIn .2s ease}
+.eitem.fijo-item{border-style:dashed;opacity:.85}
+@keyframes sIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.eicon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.eicon.m{background:var(--ms)}.eicon.v{background:var(--vs)}
+.einfo{flex:1;min-width:0}
+.ecat{font-size:13px;font-weight:600}
+.edesc{font-size:11px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emeta{display:flex;align-items:flex-end;flex-direction:column;gap:3px;flex-shrink:0}
+.eamt{font-family:'DM Mono',monospace;font-size:14px;font-weight:500}
+.eamt.m{color:var(--mati)}.eamt.v{color:var(--vale)}
+.etag{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:600}
+.etag.sp{background:rgba(245,197,66,.12);color:var(--yellow)}
+.etag.so{background:var(--surf2);color:var(--text2)}
+.etag.fj{background:rgba(96,165,250,.12);color:#60a5fa}
+.delbtn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:14px;padding:5px;opacity:.35;transition:opacity .2s;flex-shrink:0}
+.delbtn:hover{opacity:1;color:var(--red)}
+
+/* ── RESUMEN ── */
+.rsum{display:flex;flex-direction:column;gap:12px}
+.mtabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.mtabs::-webkit-scrollbar{display:none}
+.mtab{padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surf);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:'DM Sans',sans-serif;transition:all .2s}
+.mtab.active{background:var(--surf2);border-color:var(--mati);color:var(--text)}
+
+.bcard{border-radius:18px;padding:22px 20px;text-align:center;border:1px solid var(--border);background:linear-gradient(135deg,#141428 0%,#0d1a2e 100%)}
+.btitle{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text2);margin-bottom:10px}
+.bamt{font-family:'DM Mono',monospace;font-size:38px;font-weight:500;margin-bottom:8px;transition:color .3s}
+.bamt.pos{color:var(--green)}.bamt.neg{color:var(--vale)}.bamt.zer{color:var(--text2)}
+.owes-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:6px}
+.owes-badge.pos{background:rgba(61,214,140,.1);color:var(--green);border:1px solid rgba(61,214,140,.22)}
+.owes-badge.neg{background:rgba(255,107,138,.1);color:var(--vale);border:1px solid rgba(255,107,138,.22)}
+.owes-badge.zer{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+.bdesc{font-size:12px;color:var(--text2)}
+
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.scard{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.swho{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.sdot{width:7px;height:7px;border-radius:50%}
+.sdot.m{background:var(--mati)}.sdot.v{background:var(--vale)}
+.sname{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.srow{margin-bottom:7px}
+.sval{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--text)}
+.slb{font-size:10px;color:var(--text2);margin-top:1px}
+.sdivider{height:1px;background:var(--border);margin:8px 0}
+.sval.pos{color:var(--green)}.sval.neg{color:var(--red)}.sval.zer{color:var(--text2)}
+
+/* Cierre card */
+.cierre-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.cierre-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 0}
+.cierre-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2)}
+.cierre-body{padding:4px 16px 4px}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.crow:last-child{border-bottom:none}
+.crow-label{font-size:13px;color:var(--text3)}
+.crow-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--text3)}
+.crow-label.bold{color:var(--text);font-weight:600}
+.crow-val.bold{color:var(--text);font-weight:600}
+.crow-val.pos{color:var(--green);font-weight:700}
+.crow-val.neg{color:var(--vale);font-weight:700}
+.cierre-footer{background:var(--surf2);padding:13px 16px;display:flex;justify-content:space-between;align-items:center}
+.cierre-footer-label{font-size:14px;font-weight:700;color:var(--text)}
+.cierre-footer-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:700}
+.cierre-footer-val.pos{color:var(--green)}.cierre-footer-val.neg{color:var(--vale)}.cierre-footer-val.zer{color:var(--text2)}
+
+/* Breakdown */
+.bkcard{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:15px}
+.bktitle{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:12px}
+.bkrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.bkrow:last-child{border-bottom:none}
+.bkcat{font-size:13px;display:flex;gap:8px;align-items:center}
+.bkamt{font-family:'DM Mono',monospace;font-size:13px;color:var(--text2)}
+
+/* ── FIJOS ── */
+/* The "Fijos" tab is now the template manager — fijos per month live in expenses */
+.flist{display:flex;flex-direction:column;gap:8px}
+.fmonth-header{display:flex;justify-content:space-between;align-items:center;padding:12px 0 6px}
+.fmonth-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2)}
+.fmonth-total{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)}
+.fitem{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:10px}
+.fico{font-size:19px;flex-shrink:0;width:30px;text-align:center}
+.finfo{flex:1;min-width:0}
+.fname{font-size:14px;font-weight:600}
+.fsub{font-size:11px;color:var(--text2);margin-top:1px;display:flex;align-items:center;gap:6px}
+.fowner-badge{font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px}
+.fowner-badge.m{background:var(--ms);color:var(--mati)}
+.fowner-badge.v{background:var(--vs);color:var(--vale)}
+.fowner-badge.both{background:rgba(245,197,66,.12);color:var(--yellow)}
+.famt{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--text3);flex-shrink:0}
+.fedit-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text2);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;flex-shrink:0}
+.fedit-btn:hover{border-color:var(--mati);color:var(--mati)}
+.fadd-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:var(--r);border:1.5px dashed var(--border);background:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.fadd-btn:hover{border-color:var(--mati);color:var(--mati)}
+.fload-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;border-radius:var(--r);border:1px solid var(--border);background:var(--surf2);color:var(--text3);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.fload-btn:hover{border-color:var(--mati);color:var(--mati)}
+.ftotal-card{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+.ftotal-left .ftl{font-size:13px;font-weight:600;color:var(--text)}
+.ftotal-left .fts{font-size:11px;color:var(--text2);margin-top:2px}
+.ftotal-amt{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--mati)}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:28px 20px;color:var(--text2)}
+.empty .big{font-size:36px;margin-bottom:10px}
+.empty p{font-size:13px;line-height:1.5}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(18px);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:700;opacity:0;transition:all .28s;z-index:600;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:82px;background:rgba(13,13,17,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;z-index:30}
+.ni{flex:1;max-width:110px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px;cursor:pointer;color:var(--text2);font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:color .2s;border:none;background:none;font-family:'DM Sans',sans-serif}
+.ni.active{color:var(--mati)}
+.ni .ico{font-size:21px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="authScreen">
+  <div class="auth-logo">🏠</div>
+  <div class="auth-title">Depto 205</div>
+  <div class="auth-sub">Gastos compartidos · Mati &amp; Vale</div>
+  <div class="auth-btns">
+    <button class="auth-btn mati" onclick="login('Mati')">👤 Soy Mati</button>
+    <button class="auth-btn vale" onclick="login('Vale')">👤 Soy Vale</button>
+  </div>
+  <div class="auth-hint">
+    📌 iPhone: Safari → compartir → "Agregar a pantalla de inicio"<br>
+    Android: Chrome → ⋮ → "Agregar a pantalla de inicio"
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="load-txt" id="loadTxt">Cargando…</div>
+</div>
+
+<!-- MODAL: agregar/editar gasto fijo del mes -->
+<div class="modal-bg" id="modalFijo">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="mfTitle">Gasto fijo del mes</div>
+    <div class="modal-field">
+      <div class="modal-label">Ícono y nombre</div>
+      <div style="display:flex;gap:8px">
+        <input id="mfIcon" style="width:64px;text-align:center;font-size:20px" placeholder="🏠" maxlength="4">
+        <input id="mfName" placeholder="Nombre del gasto" style="flex:1">
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field">
+        <div class="modal-label">Monto</div>
+        <input id="mfAmt" type="number" placeholder="0" inputmode="numeric">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">Mes</div>
+        <select id="mfMonth"></select>
+      </div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">¿Quién paga?</div>
+      <select id="mfOwner">
+        <option value="Mati">Mati</option>
+        <option value="Vale">Vale</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">¿Se divide en 2?</div>
+      <select id="mfSplit">
+        <option value="1">Sí — 50/50 compartido</option>
+        <option value="0">No — solo de quien paga</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn cancel" onclick="closeFijoModal()">Cancelar</button>
+      <button class="mbtn danger hidden" id="mfDelBtn" onclick="deleteFijoEntry()">Eliminar</button>
+      <button class="mbtn primary" onclick="saveFijoEntry()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: importar datos -->
+<div class="modal-bg" id="modalImport">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📥 Importar datos</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.6">Pega el contenido del archivo <code style="color:var(--mati)">depto205_gastos_data.json</code> de Drive:</div>
+    <textarea id="importTA" style="width:100%;height:100px;background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:DM Mono,monospace;font-size:12px;outline:none;resize:none" placeholder='{"expenses":[...]}'></textarea>
+    <button class="mbtn cancel" onclick="exportData()" style="font-size:13px">📤 Exportar / copiar JSON</button>
+    <div class="modal-actions">
+      <button class="mbtn cancel" onclick="closeImportModal()">Cancelar</button>
+      <button class="mbtn primary" onclick="importData()">✓ Importar</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hdr-top">
+    <span class="app-name">Depto 205</span>
+    <div class="hdr-right">
+      <button class="sync-btn" id="syncBtn" onclick="syncNow()">⟳ Sync</button>
+      <span class="mbadge" id="monthLabel">—</span>
+    </div>
+  </div>
+  <div class="hdr-title">Gastos 🏠</div>
+  <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+    <div class="upill mati" id="upill" onclick="logout()">
+      <div class="dot"></div>
+      <span id="upillName">Mati</span>
+      <span class="chg">cambiar</span>
+    </div>
+    <button onclick="openImportModal()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:3px 10px;color:var(--text2);font-size:11px;cursor:pointer;font-family:DM Sans,sans-serif">📥 datos</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('agregar')">+ Agregar</button>
+  <button class="tab" onclick="showTab('gastos')">Gastos</button>
+  <button class="tab" onclick="showTab('resumen')">Resumen</button>
+  <button class="tab" onclick="showTab('fijos')">Fijos</button>
+</div>
+
+<div class="content">
+
+  <!-- TAB: AGREGAR -->
+  <div id="tab-agregar" class="add-sec">
+    <div>
+      <div class="sec-label">Categoría</div>
+      <div style="height:8px"></div>
+      <div class="catgrid" id="catGrid"></div>
+    </div>
+    <div class="amt-box">
+      <div class="amt-row">
+        <span class="clabel">$</span>
+        <input class="ainput" id="amtIn" type="number" placeholder="0" inputmode="numeric">
+      </div>
+      <input class="dinput" id="descIn" type="text" placeholder="Descripción (opcional)">
+    </div>
+    <div class="split-row">
+      <div>
+        <div class="split-lbl">Dividir en 2</div>
+        <div class="split-sub">Gasto compartido 50/50</div>
+      </div>
+      <button class="toggle on" id="splitTgl" onclick="toggleSplit()"></button>
+    </div>
+    <button class="sub-btn mati" id="submitBtn" onclick="addExpense()">Registrar — Mati</button>
+  </div>
+
+  <!-- TAB: GASTOS -->
+  <div id="tab-gastos" class="hidden elist"></div>
+
+  <!-- TAB: RESUMEN -->
+  <div id="tab-resumen" class="hidden rsum">
+    <div class="mtabs" id="mtabs"></div>
+    <div class="bcard">
+      <div class="btitle">Balance del mes</div>
+      <div class="bamt zer" id="bAmt">$0</div>
+      <div id="bOwes"></div>
+      <div class="bdesc" id="bDesc"></div>
+    </div>
+    <div class="sgrid">
+      <div class="scard">
+        <div class="swho"><div class="sdot m"></div><span class="sname">Mati</span></div>
+        <div class="srow"><div class="sval" id="mPaid">$0</div><div class="slb">pagó en total</div></div>
+        <div class="sdivider"></div>
+        <div class="srow"><div class="sval" id="mOwes">$0</div><div class="slb">le corresponde</div></div>
+        <div class="sdivider"></div>
+        <div class="srow"><div class="sval zer" id="mDiff">$0</div><div class="slb" id="mDiffLbl">diferencia</div></div>
+      </div>
+      <div class="scard">
+        <div class="swho"><div class="sdot v"></div><span class="sname">Vale</span></div>
+        <div class="srow"><div class="sval" id="vPaid">$0</div><div class="slb">pagó en total</div></div>
+        <div class="sdivider"></div>
+        <div class="srow"><div class="sval" id="vOwes">$0</div><div class="slb">le corresponde</div></div>
+        <div class="sdivider"></div>
+        <div class="srow"><div class="sval zer" id="vDiff">$0</div><div class="slb" id="vDiffLbl">diferencia</div></div>
+      </div>
+    </div>
+    <div class="cierre-card">
+      <div class="cierre-header">
+        <div class="cierre-title">Detalle del cierre</div>
+      </div>
+      <div class="cierre-body" id="cierreRows"></div>
+      <div class="cierre-footer">
+        <div class="cierre-footer-label" id="cierreLabel">Sin datos</div>
+        <div class="cierre-footer-val zer" id="cierreVal">—</div>
+      </div>
+    </div>
+    <div class="bkcard">
+      <div class="bktitle">Por categoría</div>
+      <div id="bklist"></div>
+    </div>
+  </div>
+
+  <!-- TAB: FIJOS -->
+  <!-- Fijos = gastos recurrentes mensuales (arriendo, luz, agua, etc.)
+       Cada entrada es un gasto real del mes con dueño asignado.
+       Se suman al resumen igual que los variables. -->
+  <div id="tab-fijos" class="hidden flist"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="bnav">
+  <button class="ni active" onclick="showTab('agregar')"><span class="ico">➕</span>Agregar</button>
+  <button class="ni" onclick="showTab('gastos')"><span class="ico">📋</span>Gastos</button>
+  <button class="ni" onclick="showTab('resumen')"><span class="ico">📊</span>Resumen</button>
+  <button class="ni" onclick="showTab('fijos')"><span class="ico">📌</span>Fijos</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════
+const DRIVE_FILE_ID = '1LSIRMzmom7drlacZ2zceSS-xMHbSz4Mm';
+const OAUTH_CLIENT_ID = ''; // pegar aquí tu Client ID de Google OAuth
+
+// ═══════════════════════════════════════════════
+// CATEGORIES
+// ═══════════════════════════════════════════════
+const CATS = [
+  {id:'arriendo',  l:'Arriendo',     e:'🏠'},
+  {id:'super',     l:'Supermercado', e:'🛒'},
+  {id:'comida',    l:'Comida',       e:'🍽️'},
+  {id:'bencina',   l:'Bencina',      e:'⛽'},
+  {id:'trans',     l:'Transporte',   e:'🚗'},
+  {id:'viaje',     l:'Viajes',       e:'✈️'},
+  {id:'inversion', l:'Inversión',    e:'📈'},
+  {id:'servicios', l:'Servicios',    e:'💡'},
+  {id:'cafe',      l:'Café',         e:'☕'},
+  {id:'aseo',      l:'Aseo',         e:'🧹'},
+  {id:'farma',     l:'Farmacia',     e:'💊'},
+  {id:'entret',    l:'Entret.',      e:'🎬'},
+  {id:'ropa',      l:'Ropa',         e:'👕'},
+  {id:'mascota',   l:'Mascota',      e:'🐾'},
+  {id:'otro',      l:'Otro',         e:'📦'},
+];
+
+// Default fijos template — copied into each new month's fijo entries
+// Each fijo becomes a real expense entry with type:'fijo'
+const FIJOS_TEMPLATE = [
+  {ic:'🏠', n:'Arriendo Depto 205',    cat:'arriendo', owner:'Mati', split:true,  amt:265000},
+  {ic:'🏢', n:'DEPA CONSORCIO',        cat:'arriendo', owner:'Mati', split:true,  amt:303500},
+  {ic:'💡', n:'Luz 205',               cat:'servicios',owner:'Mati', split:true,  amt:10309},
+  {ic:'💧', n:'Agua 205',              cat:'servicios',owner:'Mati', split:true,  amt:5200},
+  {ic:'📡', n:'Movistar 205',          cat:'servicios',owner:'Mati', split:true,  amt:16572},
+  {ic:'🏦', n:'Crédito Hipotecario',   cat:'inversion',owner:'Mati', split:true,  amt:266101},
+  {ic:'🔖', n:'Contribuciones',        cat:'arriendo', owner:'Mati', split:true,  amt:76514},
+  {ic:'🎵', n:'YouTube Premium',       cat:'servicios',owner:'Mati', split:true,  amt:5500},
+];
+
+const MN = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+            'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+// All expenses (variable + fijos) share the same array.
+// fijos have type:'fijo', variable have type:'var' (or undefined for legacy)
+let user      = localStorage.getItem('d205_user') || null;
+let expenses  = [];
+let selCat    = null;
+let splitOn   = true;
+let selMonth  = null;
+let saveTimer = null;
+let saving    = false;
+let fallback  = false;
+let editingFijoId = null; // id of fijo entry being edited
+
+// ═══════════════════════════════════════════════
+// MONTH HELPERS
+// ═══════════════════════════════════════════════
+function mKey(d){ d=d||new Date(); return d.getFullYear()+'-'+(d.getMonth()+1); }
+function mLabel(k){
+  if(!k){const d=new Date();return MN[d.getMonth()]+' '+d.getFullYear();}
+  const[y,m]=k.split('-'); return MN[parseInt(m,10)-1]+' '+y;
+}
+function last3(){
+  const ks=[],d=new Date();
+  for(let i=0;i<3;i++){ks.push(mKey(d));d.setMonth(d.getMonth()-1);}
+  return ks;
+}
+function prune(arr){ const keep=new Set(last3()); return arr.filter(e=>keep.has(e.monthKey)); }
+
+document.getElementById('monthLabel').textContent = mLabel();
+
+// Fill month selector in fijo modal
+function fillMonthSelect(){
+  const sel=document.getElementById('mfMonth');
+  sel.innerHTML='';
+  last3().forEach(k=>{
+    const o=document.createElement('option');
+    o.value=k; o.textContent=mLabel(k);
+    sel.appendChild(o);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════
+function login(u){
+  user=u; localStorage.setItem('d205_user',u);
+  document.getElementById('authScreen').style.display='none';
+  applyUser(u); loadData();
+}
+function logout(){
+  localStorage.removeItem('d205_user'); user=null;
+  document.getElementById('authScreen').style.display='flex';
+}
+function applyUser(u){
+  const pill=document.getElementById('upill');
+  pill.className='upill '+(u==='Mati'?'mati':'vale');
+  document.getElementById('upillName').textContent=u;
+  document.getElementById('submitBtn').className='sub-btn '+(u==='Mati'?'mati':'vale');
+  document.getElementById('submitBtn').textContent='Registrar — '+u;
+  renderCats();
+}
+
+// ═══════════════════════════════════════════════
+// DRIVE
+// ═══════════════════════════════════════════════
+function getToken(){ return localStorage.getItem('d205_token'); }
+function clearToken(){ localStorage.removeItem('d205_token'); }
+
+async function driveGet(){
+  const t=getToken(); if(!t) return null;
+  try{
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,
+      {headers:{'Authorization':'Bearer '+t}});
+    if(r.status===401){clearToken();return null;}
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){return null;}
+}
+
+async function drivePut(payload){
+  const t=getToken(); if(!t) return false;
+  try{
+    const r=await fetch(
+      `https://www.googleapis.com/upload/drive/v3/files/${DRIVE_FILE_ID}?uploadType=media`,
+      {method:'PATCH',headers:{'Authorization':'Bearer '+t,'Content-Type':'application/json'},
+       body:JSON.stringify(payload)});
+    if(r.status===401){clearToken();return false;}
+    return r.ok;
+  }catch(e){return false;}
+}
+
+function startOAuth(){
+  if(!OAUTH_CLIENT_ID){useFallback();return;}
+  const p=new URLSearchParams({
+    client_id:OAUTH_CLIENT_ID, redirect_uri:location.origin+location.pathname,
+    response_type:'token', scope:'https://www.googleapis.com/auth/drive.file', prompt:'consent',
+  });
+  location.href='https://accounts.google.com/o/oauth2/v2/auth?'+p;
+}
+
+function parseOAuthHash(){
+  if(!location.hash) return false;
+  const p=new URLSearchParams(location.hash.slice(1));
+  const t=p.get('access_token');
+  if(t){localStorage.setItem('d205_token',t);history.replaceState(null,'',location.pathname);return true;}
+  return false;
+}
+
+function useFallback(){
+  fallback=true;
+  try{
+    const raw=localStorage.getItem('d205_data');
+    if(raw){const d=JSON.parse(raw);expenses=normalizeAll(d.expenses||[]);}
+  }catch(e){}
+  renderAll(); hideLoad();
+  showToast('💾 Modo local — configura OAuth para Drive','#f5c542',4000);
+}
+function saveFallback(){ try{localStorage.setItem('d205_data',JSON.stringify({expenses}));}catch(e){} }
+
+async function loadData(){
+  showLoad('Cargando datos de Drive…');
+  if(!getToken()){hideLoad(); if(OAUTH_CLIENT_ID) startOAuth(); else useFallback(); return;}
+  const data=await driveGet();
+  if(data) expenses=prune(normalizeAll(data.expenses||[]));
+  renderAll(); hideLoad();
+}
+
+async function saveData(){
+  if(saving) return;
+  if(fallback){saveFallback();return;}
+  saving=true; setSyncSt('syncing');
+  const ok=await drivePut({expenses:prune(expenses),lastUpdated:new Date().toISOString()});
+  setSyncSt(ok?'ok':'err');
+  if(ok) setTimeout(()=>setSyncSt('idle'),2500);
+  saving=false;
+}
+
+function schedSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveData,700); }
+
+async function syncNow(){
+  if(fallback){showToast('Modo local activo','#f5c542');return;}
+  showLoad('Sincronizando…');
+  const data=await driveGet();
+  if(data){expenses=prune(normalizeAll(data.expenses||[]));renderAll();}
+  hideLoad(); showToast('✓ Sincronizado');
+}
+
+function setSyncSt(s){
+  const b=document.getElementById('syncBtn');
+  b.className='sync-btn'+(s==='idle'?'':' '+s);
+  b.textContent=s==='syncing'?'⟳ Guardando…':s==='ok'?'✓ Guardado':s==='err'?'⚠ Error':'⟳ Sync';
+}
+
+// ═══════════════════════════════════════════════
+// LOADING
+// ═══════════════════════════════════════════════
+function showLoad(t){document.getElementById('loadingOverlay').style.display='flex';document.getElementById('loadTxt').textContent=t||'Cargando…';}
+function hideLoad(){document.getElementById('loadingOverlay').style.display='none';}
+
+// ═══════════════════════════════════════════════
+// NORMALIZE LEGACY DATA
+// ═══════════════════════════════════════════════
+function reCat(desc){
+  const d=(desc||'').toLowerCase();
+  if(/arriendo|depto|consorcio|gastos comunes|hipotec|contribuci/.test(d)) return {id:'arriendo',l:'Arriendo',e:'🏠'};
+  if(/jumbo|tottus|lider|santa isabel|super(?!merca)|mercado/.test(d)) return {id:'super',l:'Supermercado',e:'🛒'};
+  if(/copec|bencina|shell|petrobras/.test(d)) return {id:'bencina',l:'Bencina',e:'⛽'};
+  if(/tren|vuelo|avion|airbnb|hospedaje|hotel|ferry|pasaje/.test(d)) return {id:'viaje',l:'Viajes',e:'✈️'};
+  if(/estacionamiento|tag|autopista|uber|taxi|metro|peaje/.test(d)) return {id:'trans',l:'Transporte',e:'🚗'};
+  if(/luz|agua|movistar|claro|vtr|entel|internet|gas |contribucion|youtube|spotify|netflix|prime|movistar/.test(d)) return {id:'servicios',l:'Servicios',e:'💡'};
+  if(/cafe|starbucks|cafeteria|once/.test(d)) return {id:'cafe',l:'Café',e:'☕'};
+  if(/aseo|detergente|confort|shampoo|limpi|trapo/.test(d)) return {id:'aseo',l:'Aseo',e:'🧹'};
+  if(/farmacia|salcobrand|crema|medicam/.test(d)) return {id:'farma',l:'Farmacia',e:'💊'};
+  if(/cine|entrad|teatro|concierto/.test(d)) return {id:'entret',l:'Entret.',e:'🎬'};
+  if(/ropa|camisa|zapato|polera|jeans|decathlon/.test(d)) return {id:'ropa',l:'Ropa',e:'👕'};
+  if(/inversion|bolsa|fondo|deposito|ahorro/.test(d)) return {id:'inversion',l:'Inversión',e:'📈'};
+  if(/almuerzo|comida|pedidos|burger|pizza|sushi|empanada|restauran|cardumen|streat/.test(d)) return {id:'comida',l:'Comida',e:'🍽️'};
+  return {id:'otro',l:'Otro',e:'📦'};
+}
+
+function normalizeAll(arr){
+  return arr.map(e=>{
+    // Fix monthKey format
+    if(e.monthKey){
+      const[y,m]=String(e.monthKey).split('-');
+      e.monthKey=y+'-'+parseInt(m,10);
+    } else if(e.month){
+      const dash=String(e.month).match(/^(\d{4})-(\d{1,2})$/);
+      if(dash) e.monthKey=dash[1]+'-'+parseInt(dash[2],10);
+      else{
+        const txt=String(e.month).match(/([A-Za-z\u00C0-\u024F]+)\s+(\d{4})/);
+        if(txt){const mi=MN.findIndex(n=>n.toLowerCase()===txt[1].toLowerCase());if(mi>=0)e.monthKey=txt[2]+'-'+(mi+1);}
+      }
+    }
+    if(!e.monthKey) e.monthKey=mKey();
+    // Re-categorize
+    if(e.desc){const c=reCat(e.desc);e.cat=c.id;e.cl=c.l;e.ce=c.e;}
+    // Ensure type
+    if(!e.type) e.type='var';
+    return e;
+  });
+}
+
+// ═══════════════════════════════════════════════
+// CATEGORIES
+// ═══════════════════════════════════════════════
+function renderCats(){
+  document.getElementById('catGrid').innerHTML=CATS.map(c=>
+    `<button class="cat-btn${selCat===c.id?' sel-'+(user==='Mati'?'m':'v'):''}" onclick="selCatFn('${c.id}')">
+    <span class="em">${c.e}</span>${c.l}</button>`
+  ).join('');
+}
+function selCatFn(id){selCat=id;renderCats();}
+function toggleSplit(){splitOn=!splitOn;document.getElementById('splitTgl').className='toggle'+(splitOn?' on':'');}
+
+// ═══════════════════════════════════════════════
+// ADD VARIABLE EXPENSE
+// ═══════════════════════════════════════════════
+function addExpense(){
+  const a=parseFloat(document.getElementById('amtIn').value);
+  const d=document.getElementById('descIn').value.trim();
+  if(!selCat){showToast('⚠️ Selecciona una categoría','#f5c542');return;}
+  if(!a||a<=0){showToast('⚠️ Ingresa un monto válido','#f5c542');return;}
+  const cat=CATS.find(c=>c.id===selCat);
+  const now=new Date();
+  expenses.unshift({
+    id:Date.now()+Math.random(), type:'var',
+    user, cat:cat.id, cl:cat.l, ce:cat.e,
+    amount:a, desc:d, split:splitOn,
+    monthKey:mKey(), date:now.toLocaleDateString('es-CL',{day:'numeric',month:'short'}),
+    ts:now.toISOString(),
+  });
+  document.getElementById('amtIn').value='';
+  document.getElementById('descIn').value='';
+  selCat=null; renderCats();
+  schedSave(); renderExpenses(); renderSummary();
+  showToast('✓ Gasto registrado');
+}
+
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+const TABS=['agregar','gastos','resumen','fijos'];
+function showTab(n){
+  TABS.forEach(t=>{const e=document.getElementById('tab-'+t);if(e)e.classList.toggle('hidden',t!==n);});
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',TABS[i]===n));
+  document.querySelectorAll('.ni').forEach((b,i)=>b.classList.toggle('active',TABS[i]===n));
+  if(n==='resumen') renderSummary();
+  if(n==='gastos')  renderExpenses();
+  if(n==='fijos')   renderFijos();
+}
+
+// ═══════════════════════════════════════════════
+// EXPENSES LIST — variables + fijos together
+// ═══════════════════════════════════════════════
+function renderExpenses(){
+  const el=document.getElementById('tab-gastos');
+  const months=last3();
+  let html='';
+  months.forEach(mk=>{
+    const list=expenses.filter(e=>e.monthKey===mk).sort((a,b)=>{
+      // fijos first, then by ts desc
+      if(a.type==='fijo'&&b.type!=='fijo') return -1;
+      if(b.type==='fijo'&&a.type!=='fijo') return 1;
+      return (b.ts||'')>(a.ts||'') ? 1 : -1;
+    });
+    html+=`<div class="mg-title">${mLabel(mk)}<div class="mg-line"></div></div>`;
+    if(!list.length){html+='<div style="padding:4px 0 10px;color:var(--text2);font-size:13px">Sin gastos</div>';return;}
+    html+=list.map(e=>{
+      const isFijo=e.type==='fijo';
+      const uc=e.user==='Mati'?'m':'v';
+      const tagHtml=isFijo
+        ?`<span class="etag fj">fijo</span>`
+        :`<span class="etag ${e.split?'sp':'so'}">${e.split?'÷2':'personal'}</span>`;
+      return `<div class="eitem${isFijo?' fijo-item':''}">
+        <div class="eicon ${uc}">${e.ce||'📦'}</div>
+        <div class="einfo">
+          <div class="ecat">${e.cl||e.cat}</div>
+          <div class="edesc">${e.desc||e.user+' · '+(e.date||'')}</div>
+        </div>
+        <div class="emeta">
+          <div class="eamt ${uc}">$${fmt(e.amount)}</div>
+          ${tagHtml}
+        </div>
+        <button class="delbtn" onclick="delExp(${JSON.stringify(e.id)})">✕</button>
+      </div>`;
+    }).join('');
+  });
+  el.innerHTML=html||'<div class="empty"><div class="big">📋</div><p>Sin gastos</p></div>';
+}
+
+function delExp(id){
+  expenses=expenses.filter(e=>e.id!==id);
+  schedSave(); renderExpenses(); renderSummary();
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY — fijos + variables together per month
+// ═══════════════════════════════════════════════
+function calcMonth(mk){
+  // ALL expenses of this month: both type=var and type=fijo
+  const exps=expenses.filter(e=>e.monthKey===mk);
+  let mP=0,vP=0,mShare=0,vShare=0;
+  exps.forEach(e=>{
+    const a=e.amount;
+    if(e.user==='Mati') mP+=a; else vP+=a;
+    if(e.split){mShare+=a/2;vShare+=a/2;}
+    else{if(e.user==='Mati')mShare+=a;else vShare+=a;}
+  });
+  const mDiff=mP-mShare; // >0 = Mati pagó de más → Vale le debe
+  const vDiff=vP-vShare;
+  return{exps,mP,vP,mShare,vShare,mDiff,vDiff,total:mP+vP};
+}
+
+function renderSummary(){
+  const months=last3();
+  if(!selMonth||!months.includes(selMonth)) selMonth=months[0];
+  document.getElementById('mtabs').innerHTML=months.map(m=>
+    `<button class="mtab${m===selMonth?' active':''}" onclick="selM('${m}')">${mLabel(m)}</button>`
+  ).join('');
+  const{exps,mP,vP,mShare,vShare,mDiff,vDiff,total}=calcMonth(selMonth);
+  const varExps=exps.filter(e=>e.type!=='fijo');
+  const fijoExps=exps.filter(e=>e.type==='fijo');
+
+  // Balance card
+  const bAEl=document.getElementById('bAmt');
+  const bOwes=document.getElementById('bOwes');
+  const bDesc=document.getElementById('bDesc');
+  const absD=Math.abs(mDiff);
+  if(!exps.length){
+    bAEl.textContent='$0';bAEl.className='bamt zer';
+    bOwes.innerHTML='';bDesc.textContent='Sin gastos registrados';
+  } else if(absD<500){
+    bAEl.textContent='$0';bAEl.className='bamt zer';
+    bOwes.innerHTML='<div class="owes-badge zer">¡Al día! 🎉</div>';
+    bDesc.textContent='';
+  } else if(mDiff>0){
+    bAEl.textContent='$'+fmt(absD);bAEl.className='bamt pos';
+    bOwes.innerHTML=`<div class="owes-badge pos">Vale le debe $${fmt(absD)} a Mati</div>`;
+    bDesc.textContent=`Mati adelantó $${fmt(absD)} de más`;
+  } else {
+    bAEl.textContent='$'+fmt(absD);bAEl.className='bamt neg';
+    bOwes.innerHTML=`<div class="owes-badge neg">Mati le debe $${fmt(absD)} a Vale</div>`;
+    bDesc.textContent=`Vale adelantó $${fmt(absD)} de más`;
+  }
+
+  // Stats
+  document.getElementById('mPaid').textContent='$'+fmt(mP);
+  document.getElementById('vPaid').textContent='$'+fmt(vP);
+  document.getElementById('mOwes').textContent='$'+fmt(mShare);
+  document.getElementById('vOwes').textContent='$'+fmt(vShare);
+  const mDE=document.getElementById('mDiff');
+  const vDE=document.getElementById('vDiff');
+  mDE.textContent=(mDiff>0?'+':'')+'$'+fmt(mDiff);
+  mDE.className='sval '+(absD<500?'zer':mDiff>0?'pos':'neg');
+  document.getElementById('mDiffLbl').textContent=mDiff>0?'adelantó ↑':mDiff<0?'debe ↓':'al día';
+  vDE.textContent=(vDiff>0?'+':'')+'$'+fmt(vDiff);
+  vDE.className='sval '+(Math.abs(vDiff)<500?'zer':vDiff>0?'pos':'neg');
+  document.getElementById('vDiffLbl').textContent=vDiff>0?'adelantó ↑':vDiff<0?'debe ↓':'al día';
+
+  // Cierre detallado
+  const mFixed=fijoExps.filter(e=>e.user==='Mati').reduce((s,e)=>s+e.amount,0);
+  const vFixed=fijoExps.filter(e=>e.user==='Vale').reduce((s,e)=>s+e.amount,0);
+  const mVar=varExps.filter(e=>e.user==='Mati').reduce((s,e)=>s+e.amount,0);
+  const vVar=varExps.filter(e=>e.user==='Vale').reduce((s,e)=>s+e.amount,0);
+  const mSharedFixed=fijoExps.filter(e=>e.split).reduce((s,e)=>s+e.amount,0);
+  const mSharedVar=varExps.filter(e=>e.split).reduce((s,e)=>s+e.amount,0);
+
+  const cr=document.getElementById('cierreRows');
+  if(!exps.length){
+    cr.innerHTML='<div style="padding:14px 0;text-align:center;color:var(--text2);font-size:13px">Sin datos para este mes</div>';
+    document.getElementById('cierreLabel').textContent='Sin datos';
+    document.getElementById('cierreVal').textContent='—';
+    document.getElementById('cierreVal').className='cierre-footer-val zer';
+  } else {
+    cr.innerHTML=`
+      <div class="crow"><span class="crow-label">Gastos fijos — Mati pagó</span><span class="crow-val">$${fmt(mFixed)}</span></div>
+      <div class="crow"><span class="crow-label">Gastos fijos — Vale pagó</span><span class="crow-val">$${fmt(vFixed)}</span></div>
+      <div class="crow"><span class="crow-label">Fijos compartidos (÷2 c/u)</span><span class="crow-val">$${fmt(mSharedFixed)} → $${fmt(mSharedFixed/2)}</span></div>
+      <div class="crow"><span class="crow-label">Variables — Mati pagó</span><span class="crow-val">$${fmt(mVar)}</span></div>
+      <div class="crow"><span class="crow-label">Variables — Vale pagó</span><span class="crow-val">$${fmt(vVar)}</span></div>
+      <div class="crow"><span class="crow-label">Variables compartidos (÷2 c/u)</span><span class="crow-val">$${fmt(mSharedVar)} → $${fmt(mSharedVar/2)}</span></div>
+      <div class="crow"><span class="crow-label bold">Mati pagó en total</span><span class="crow-val bold">$${fmt(mP)}</span></div>
+      <div class="crow"><span class="crow-label bold">Mati le correspondía</span><span class="crow-val bold">$${fmt(mShare)}</span></div>
+      <div class="crow"><span class="crow-label bold">Vale pagó en total</span><span class="crow-val bold">$${fmt(vP)}</span></div>
+      <div class="crow"><span class="crow-label bold">Vale le correspondía</span><span class="crow-val bold">$${fmt(vShare)}</span></div>`;
+    const lbl=absD<500?'¡Al día!':mDiff>0?'Vale → Mati':'Mati → Vale';
+    const val=absD<500?'—':'$'+fmt(absD);
+    const cls=absD<500?'zer':mDiff>0?'pos':'neg';
+    document.getElementById('cierreLabel').textContent=lbl;
+    document.getElementById('cierreVal').textContent=val;
+    document.getElementById('cierreVal').className='cierre-footer-val '+cls;
+  }
+
+  // Breakdown por categoría (todos)
+  const byc={};
+  exps.forEach(e=>{
+    if(!byc[e.cat]) byc[e.cat]={l:e.cl||e.cat,e:e.ce||'📦',t:0};
+    byc[e.cat].t+=e.amount;
+  });
+  const sorted=Object.values(byc).sort((a,b)=>b.t-a.t);
+  document.getElementById('bklist').innerHTML=sorted.length
+    ?sorted.map(c=>`<div class="bkrow"><span class="bkcat">${c.e} ${c.l}</span><span class="bkamt">$${fmt(c.t)}</span></div>`).join('')
+    :'<div style="text-align:center;padding:12px 0;color:var(--text2);font-size:13px">Sin gastos</div>';
+}
+
+function selM(m){selMonth=m;renderSummary();}
+
+// ═══════════════════════════════════════════════
+// FIJOS TAB — gestión de gastos fijos por mes
+// ═══════════════════════════════════════════════
+function renderFijos(){
+  const el=document.getElementById('tab-fijos');
+  const months=last3();
+  let html='';
+
+  months.forEach(mk=>{
+    const fijoList=expenses.filter(e=>e.monthKey===mk&&e.type==='fijo');
+    const total=fijoList.reduce((s,e)=>s+e.amount,0);
+    html+=`<div class="fmonth-header">
+      <div class="fmonth-title">${mLabel(mk)}</div>
+      <div class="fmonth-total">$${fmt(total)}</div>
+    </div>`;
+
+    if(!fijoList.length){
+      // Find previous month to show in button label
+      const [fy, fm] = mk.split('-').map(Number);
+      const prevMk2 = mKey(new Date(fy, fm - 2, 1));
+      const hasPrev = expenses.some(e => e.monthKey === prevMk2 && e.type === 'fijo');
+      const btnLabel = hasPrev
+        ? '⬇ Copiar fijos de ' + mLabel(prevMk2)
+        : '⬇ Cargar fijos base en ' + mLabel(mk);
+      html+=`<button class="fload-btn" onclick="loadFijosTemplate('${mk}')">${btnLabel}</button>`;
+    } else {
+      html+=fijoList.map(e=>{
+        const uc=e.user==='Mati'?'m':'v';
+        const splitTag=e.split
+          ?'<span class="fowner-badge both">÷2</span>'
+          :`<span class="fowner-badge ${uc}">${e.user}</span>`;
+        return `<div class="fitem">
+          <span class="fico">${e.ce||'📌'}</span>
+          <div class="finfo">
+            <div class="fname">${e.desc||e.cl}</div>
+            <div class="fsub">
+              <span class="fowner-badge ${uc}">${e.user}</span>
+              ${splitTag}
+            </div>
+          </div>
+          <div class="famt">$${fmt(e.amount)}</div>
+          <button class="fedit-btn" onclick="openFijoModal(${JSON.stringify(e.id)})">editar</button>
+        </div>`;
+      }).join('');
+      // Total card for this month
+      const mFijos=fijoList.filter(e=>e.user==='Mati').reduce((s,e)=>s+e.amount,0);
+      const vFijos=fijoList.filter(e=>e.user==='Vale').reduce((s,e)=>s+e.amount,0);
+      html+=`<div class="ftotal-card">
+        <div class="ftotal-left">
+          <div class="ftl">Total fijos ${mLabel(mk)}</div>
+          <div class="fts">Mati: $${fmt(mFijos)} · Vale: $${fmt(vFijos)}</div>
+        </div>
+        <div class="ftotal-amt">$${fmt(total)}</div>
+      </div>`;
+    }
+    html+=`<button class="fadd-btn" onclick="openFijoModalNew('${mk}')">＋ Agregar fijo en ${mLabel(mk)}</button>`;
+    html+='<div style="height:8px"></div>';
+  });
+
+  el.innerHTML=html||'<div class="empty"><div class="big">📌</div><p>Sin fijos</p></div>';
+}
+
+// Load fijos into a month — copies from previous month if available, else uses template
+function loadFijosTemplate(mk){
+  // Find the previous month key
+  const [y, m] = mk.split('-').map(Number);
+  const prevDate = new Date(y, m - 2, 1); // month is 0-indexed, go back one
+  const prevMk = mKey(prevDate);
+
+  const prevFijos = expenses.filter(e => e.monthKey === prevMk && e.type === 'fijo');
+  const ts = new Date().toISOString();
+
+  if(prevFijos.length > 0){
+    // Copy from previous month with fresh IDs and new monthKey
+    prevFijos.forEach((e, i) => {
+      expenses.push({
+        ...e,
+        id: Date.now() + i + Math.random(),
+        monthKey: mk,
+        ts,
+        date: '',
+      });
+    });
+    showToast('✓ Fijos copiados de ' + mLabel(prevMk));
+  } else {
+    // No previous month data — fall back to default template
+    FIJOS_TEMPLATE.forEach((t, i) => {
+      const cat = CATS.find(c => c.id === t.cat) || {id:'otro', l:'Otro', e:'📦'};
+      expenses.push({
+        id: Date.now() + i + Math.random(), type: 'fijo',
+        user: t.owner, cat: cat.id, cl: cat.l, ce: cat.e,
+        amount: t.amt, desc: t.n, split: t.split,
+        monthKey: mk, date: '', ts,
+      });
+    });
+    showToast('✓ Fijos cargados desde template base');
+  }
+  schedSave(); renderFijos(); renderSummary();
+}
+
+// ── Fijo modal ──
+function openFijoModalNew(mk){
+  editingFijoId=null;
+  fillMonthSelect();
+  document.getElementById('mfTitle').textContent='Nuevo gasto fijo';
+  document.getElementById('mfDelBtn').classList.add('hidden');
+  document.getElementById('mfIcon').value='';
+  document.getElementById('mfName').value='';
+  document.getElementById('mfAmt').value='';
+  document.getElementById('mfOwner').value='Mati';
+  document.getElementById('mfSplit').value='1';
+  document.getElementById('mfMonth').value=mk;
+  document.getElementById('modalFijo').classList.add('open');
+}
+
+function openFijoModal(id){
+  editingFijoId=id;
+  const e=expenses.find(x=>x.id===id);
+  if(!e) return;
+  fillMonthSelect();
+  document.getElementById('mfTitle').textContent='Editar gasto fijo';
+  document.getElementById('mfDelBtn').classList.remove('hidden');
+  document.getElementById('mfIcon').value=e.ce||'';
+  document.getElementById('mfName').value=e.desc||e.cl||'';
+  document.getElementById('mfAmt').value=e.amount;
+  document.getElementById('mfOwner').value=e.user;
+  document.getElementById('mfSplit').value=e.split?'1':'0';
+  document.getElementById('mfMonth').value=e.monthKey;
+  document.getElementById('modalFijo').classList.add('open');
+}
+
+function closeFijoModal(){
+  document.getElementById('modalFijo').classList.remove('open');
+  editingFijoId=null;
+}
+
+function saveFijoEntry(){
+  const ic=document.getElementById('mfIcon').value.trim()||'📌';
+  const n=document.getElementById('mfName').value.trim();
+  const a=parseFloat(document.getElementById('mfAmt').value);
+  const owner=document.getElementById('mfOwner').value;
+  const split=document.getElementById('mfSplit').value==='1';
+  const mk=document.getElementById('mfMonth').value;
+  if(!n){showToast('⚠️ Escribe un nombre','#f5c542');return;}
+  if(!a||a<=0){showToast('⚠️ Monto inválido','#f5c542');return;}
+  const cat=reCat(n);
+  if(editingFijoId){
+    const idx=expenses.findIndex(x=>x.id===editingFijoId);
+    if(idx>-1) expenses[idx]={...expenses[idx],ce:ic,desc:n,cl:cat.l,cat:cat.id,ce:ic,amount:a,user:owner,split,monthKey:mk};
+  } else {
+    expenses.push({
+      id:Date.now()+Math.random(), type:'fijo',
+      user:owner, cat:cat.id, cl:cat.l, ce:ic,
+      amount:a, desc:n, split,
+      monthKey:mk, date:'', ts:new Date().toISOString(),
+    });
+  }
+  closeFijoModal(); schedSave(); renderFijos(); renderSummary(); renderExpenses();
+  showToast('✓ Fijo guardado');
+}
+
+function deleteFijoEntry(){
+  if(!editingFijoId) return;
+  expenses=expenses.filter(x=>x.id!==editingFijoId);
+  closeFijoModal(); schedSave(); renderFijos(); renderSummary(); renderExpenses();
+  showToast('Fijo eliminado');
+}
+
+document.getElementById('modalFijo').addEventListener('click',function(e){if(e.target===this)closeFijoModal();});
+
+// ═══════════════════════════════════════════════
+// IMPORT / EXPORT
+// ═══════════════════════════════════════════════
+function openImportModal(){document.getElementById('importTA').value='';document.getElementById('modalImport').classList.add('open');}
+function closeImportModal(){document.getElementById('modalImport').classList.remove('open');}
+function importData(){
+  const raw=document.getElementById('importTA').value.trim();
+  if(!raw){showToast('⚠️ Pega el JSON primero','#f5c542');return;}
+  try{
+    const d=JSON.parse(raw);
+    if(d.expenses){expenses=normalizeAll(d.expenses);showToast('✓ '+expenses.length+' gastos importados');}
+    schedSave(); renderAll(); closeImportModal();
+  }catch(e){showToast('⚠️ JSON inválido','#f87171');}
+}
+function exportData(){
+  const json=JSON.stringify({expenses:prune(expenses),lastUpdated:new Date().toISOString()},null,2);
+  navigator.clipboard.writeText(json)
+    .then(()=>showToast('✓ JSON copiado'))
+    .catch(()=>{document.getElementById('importTA').value=json;showToast('Copia el texto del área','#f5c542',4000);});
+}
+document.getElementById('modalImport').addEventListener('click',function(e){if(e.target===this)closeImportModal();});
+
+// ═══════════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════════
+function renderAll(){
+  renderCats(); renderExpenses(); renderFijos();
+  const rTab=document.getElementById('tab-resumen');
+  if(rTab&&!rTab.classList.contains('hidden')) renderSummary();
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function fmt(n){
+  const r=Math.round(n);
+  if(r<0) return '-'+Math.abs(r).toLocaleString('es-CL');
+  return r.toLocaleString('es-CL');
+}
+
+let toastTmr;
+function showToast(msg,color,dur){
+  clearTimeout(toastTmr);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=color||'var(--green)'; t.style.color='#0d0d11';
+  t.classList.add('show'); toastTmr=setTimeout(()=>t.classList.remove('show'),dur||2400);
+}
+
+// ═══════════════════════════════════════════════
+// STARTUP
+// ═══════════════════════════════════════════════
+parseOAuthHash();
+if(user){document.getElementById('authScreen').style.display='none';applyUser(user);loadData();}
+</script>
+</body>
+</html>
