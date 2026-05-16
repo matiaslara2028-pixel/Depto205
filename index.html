@@ -545,19 +545,24 @@ function getToken(){ return true; } // GAS handles auth
 function clearToken(){ } // not needed with GAS
 
 async function driveGet(){
-  try{
-    // GAS requires redirect:follow and specific mode for CORS
-    const r = await fetch(GAS_URL + '?t=' + Date.now(), {
-      method: 'GET',
-      redirect: 'follow',
-    });
-    if(!r.ok) return null;
-    const text = await r.text();
-    return JSON.parse(text);
-  }catch(e){
-    console.error('driveGet error:', e);
-    return null;
-  }
+  return new Promise((resolve) => {
+    const cbName = 'gasCallback_' + Date.now();
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      document.body.removeChild(script);
+      resolve(null);
+    }, 8000);
+    window[cbName] = (data) => {
+      clearTimeout(timeout);
+      delete window[cbName];
+      document.body.removeChild(script);
+      resolve(data);
+    };
+    script.src = GAS_URL + '?callback=' + cbName + '&t=' + Date.now();
+    script.onerror = () => { clearTimeout(timeout); resolve(null); };
+    document.body.appendChild(script);
+  });
 }
 
 async function drivePut(payload){
