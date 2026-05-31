@@ -26,8 +26,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .modal{background:var(--surf);border-radius:22px 22px 0 0;width:100%;max-width:440px;padding:20px 20px 32px;display:flex;flex-direction:column;gap:13px;max-height:88vh;overflow-y:auto}
 .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto -4px}
 .modal-title{font-size:16px;font-weight:700;text-align:center;letter-spacing:-.2px}
-.modal input,.modal select{width:100%;background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;appearance:none}
-.modal input:focus,.modal select:focus{border-color:var(--mati)}
+.modal input,.modal select,.modal textarea{width:100%;background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;appearance:none}
+.modal textarea{font-family:'DM Mono',monospace;font-size:12px;resize:vertical;min-height:120px}
+.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--mati)}
 .modal-row{display:flex;gap:8px}
 .modal-row .modal-field{flex:1}
 .modal-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:5px}
@@ -37,6 +38,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .mbtn.danger{background:rgba(248,113,113,.13);color:var(--red);border:1px solid rgba(248,113,113,.28)}
 .mbtn.cancel{background:var(--surf2);color:var(--text3);border:1px solid var(--border)}
 .mbtn:active{transform:scale(.97)}
+.help-box{font-size:12px;color:var(--text3);line-height:1.6;background:var(--surf2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.help-box code{color:var(--mati);font-family:'DM Mono',monospace;font-size:11px;word-break:break-all}
+.help-box ol{padding-left:18px;margin-top:6px}
+.help-box li{margin-bottom:4px}
+.help-box a{color:var(--mati);text-decoration:none}
 
 /* ── AUTH ── */
 #authScreen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:18px}
@@ -66,6 +72,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .sync-btn.syncing{color:var(--yellow);border-color:var(--yellow)}
 .sync-btn.ok{color:var(--green);border-color:var(--green)}
 .sync-btn.err{color:var(--red);border-color:var(--red)}
+.sync-btn.live{color:var(--green);border-color:var(--green)}
+.sync-btn.live::before{content:'';display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-right:2px;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .hdr-title{font-size:25px;font-weight:700;letter-spacing:-.4px;margin-top:6px}
 .upill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:4px;cursor:pointer;user-select:none}
 .upill.mati{background:var(--ms);color:var(--mati)}
@@ -74,6 +83,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .upill.mati .dot{background:var(--mati)}
 .upill.vale .dot{background:var(--vale)}
 .upill .chg{color:var(--text2);font-weight:400;font-size:11px;margin-left:2px}
+.hdr-actions{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
+.mini-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:3px 10px;color:var(--text2);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif}
 
 /* ── TABS ── */
 .tabs{width:100%;max-width:440px;padding:8px 18px 12px;display:flex;gap:6px;background:var(--bg);position:sticky;top:0;z-index:20}
@@ -105,6 +116,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .toggle.on{background:var(--mati)}
 .toggle::after{content:'';position:absolute;width:17px;height:17px;background:#fff;border-radius:9px;top:3px;left:3px;transition:transform .2s}
 .toggle.on::after{transform:translateX(19px)}
+.split-row select{background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;appearance:none;cursor:pointer;max-width:160px;text-align:right}
+.split-row select:focus{border-color:var(--mati)}
 .sub-btn{width:100%;padding:15px;border-radius:var(--r);border:none;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .18s}
 .sub-btn.mati{background:var(--mati);color:#fff}
 .sub-btn.vale{background:var(--vale);color:#fff}
@@ -131,6 +144,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .etag.fj{background:rgba(96,165,250,.12);color:#60a5fa}
 .delbtn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:14px;padding:5px;opacity:.35;transition:opacity .2s;flex-shrink:0}
 .delbtn:hover{opacity:1;color:var(--red)}
+.editbtn{background:none;border:1px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-size:11px;font-weight:600;padding:3px 8px;font-family:'DM Sans',sans-serif;flex-shrink:0;transition:all .2s}
+.editbtn:hover{border-color:var(--mati);color:var(--mati)}
+
+/* ── DIV MODE SELECTOR ── */
+.div-mode-row{display:flex;gap:6px}
+.div-mode-btn{flex:1;padding:9px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--surf2);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;line-height:1.3}
+.div-mode-btn.dm-shared{border-color:var(--yellow);background:rgba(245,197,66,.12);color:var(--yellow)}
+.div-mode-btn.dm-me{border-color:var(--mati);background:var(--ms);color:var(--text)}
+.div-mode-btn.dm-me.v{border-color:var(--vale);background:var(--vs)}
+.div-mode-btn.dm-other{border-color:var(--vale);background:var(--vs);color:var(--text)}
+.div-mode-btn.dm-other.v{border-color:var(--mati);background:var(--ms)}
+
+/* ── SORT BAR ── */
+.sort-bar{display:flex;align-items:center;gap:6px;padding:10px 0 6px}
+.sort-lbl{font-size:10px;color:var(--text2);font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.sort-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surf);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+.sort-btn.active{background:var(--surf2);border-color:var(--mati);color:var(--text)}
 
 /* ── RESUMEN ── */
 .rsum{display:flex;flex-direction:column;gap:12px}
@@ -188,7 +218,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .bkamt{font-family:'DM Mono',monospace;font-size:13px;color:var(--text2)}
 
 /* ── FIJOS ── */
-/* The "Fijos" tab is now the template manager — fijos per month live in expenses */
 .flist{display:flex;flex-direction:column;gap:8px}
 .fmonth-header{display:flex;justify-content:space-between;align-items:center;padding:12px 0 6px}
 .fmonth-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2)}
@@ -229,6 +258,25 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ni.active{color:var(--mati)}
 .ni .ico{font-size:21px}
 .hidden{display:none!important}
+
+/* ── FIREBASE SETUP SCREEN ── */
+#cfgScreen{position:fixed;inset:0;background:var(--bg);z-index:480;display:none;flex-direction:column;align-items:center;padding:40px 20px;overflow-y:auto}
+#cfgScreen.open{display:flex}
+.cfg-card{max-width:440px;width:100%;display:flex;flex-direction:column;gap:14px}
+.cfg-logo{font-size:46px;text-align:center}
+.cfg-title{font-size:22px;font-weight:700;text-align:center;letter-spacing:-.3px}
+.cfg-sub{font-size:13px;color:var(--text2);text-align:center;line-height:1.6}
+.cfg-steps{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:16px;font-size:12px;line-height:1.7;color:var(--text3)}
+.cfg-steps b{color:var(--text);font-weight:700}
+.cfg-steps code{color:var(--mati);font-family:'DM Mono',monospace;font-size:11px;background:var(--surf2);padding:2px 6px;border-radius:5px}
+.cfg-steps a{color:var(--mati);text-decoration:none;font-weight:600}
+.cfg-steps ol{padding-left:18px;margin-top:6px}
+.cfg-steps li{margin-bottom:8px}
+.cfg-input{width:100%;background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;outline:none;resize:vertical;min-height:160px}
+.cfg-input:focus{border-color:var(--mati)}
+.cfg-btn{padding:14px;border-radius:12px;border:none;background:var(--mati);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer}
+.cfg-btn:active{transform:scale(.98)}
+.cfg-skip{background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
 </style>
 </head>
 <body>
@@ -245,6 +293,36 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <div class="auth-hint">
     📌 iPhone: Safari → compartir → "Agregar a pantalla de inicio"<br>
     Android: Chrome → ⋮ → "Agregar a pantalla de inicio"
+  </div>
+</div>
+
+<!-- FIREBASE CONFIG SCREEN -->
+<div id="cfgScreen">
+  <div class="cfg-card">
+    <div class="cfg-logo">🔥</div>
+    <div class="cfg-title">Conectar Firebase</div>
+    <div class="cfg-sub">Esto activa el sync en vivo entre Mati y Vale.<br>Solo se hace <b>una vez</b>.</div>
+    <div class="cfg-steps">
+      <b>Pasos rápidos (5 min):</b>
+      <ol>
+        <li>Entra a <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> con tu cuenta Google.</li>
+        <li>Click <b>"Add project"</b> → nombre <code>depto205</code> → continuar (sin Analytics).</li>
+        <li>Menú izq → <b>Build → Realtime Database</b> → <b>Create Database</b> → región más cercana → <b>modo prueba</b> ("test mode").</li>
+        <li>Engranaje arriba izq → <b>Project settings</b> → baja a <b>"Your apps"</b> → click el ícono <code>&lt;/&gt;</code> (Web) → registra app con nombre <code>depto205</code>.</li>
+        <li>Copia el objeto <code>firebaseConfig = {...}</code> (todo el bloque entre llaves) y pégalo abajo.</li>
+        <li>Comparte este archivo HTML con Vale: ella abre el mismo enlace y ya están conectados.</li>
+      </ol>
+    </div>
+    <div class="modal-label">Pega aquí el objeto firebaseConfig</div>
+    <textarea class="cfg-input" id="cfgInput" placeholder='{
+  "apiKey": "AIzaSy...",
+  "authDomain": "depto205.firebaseapp.com",
+  "databaseURL": "https://depto205-default-rtdb.firebaseio.com",
+  "projectId": "depto205",
+  ...
+}'></textarea>
+    <button class="cfg-btn" onclick="saveFirebaseConfig()">✓ Conectar y guardar</button>
+    <button class="cfg-skip" onclick="skipFirebaseConfig()">Usar sin sync (solo este dispositivo)</button>
   </div>
 </div>
 
@@ -298,17 +376,68 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 </div>
 
-<!-- MODAL: importar datos -->
+<!-- MODAL: importar / exportar datos -->
 <div class="modal-bg" id="modalImport">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">📥 Importar datos</div>
-    <div style="font-size:13px;color:var(--text2);line-height:1.6">Pega el contenido del archivo <code style="color:var(--mati)">depto205_gastos_data.json</code> de Drive:</div>
-    <textarea id="importTA" style="width:100%;height:100px;background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:DM Mono,monospace;font-size:12px;outline:none;resize:none" placeholder='{"expenses":[...]}'></textarea>
-    <button class="mbtn cancel" onclick="exportData()" style="font-size:13px">📤 Exportar / copiar JSON</button>
+    <div class="modal-title">📥 Importar / Exportar</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.6">Pega aquí el contenido de tu <code style="color:var(--mati)">depto205_gastos_data.json</code> para restaurar o migrar datos:</div>
+    <textarea id="importTA" placeholder='{"expenses":[...]}'></textarea>
+    <button class="mbtn cancel" onclick="exportData()" style="font-size:13px">📤 Exportar / copiar JSON actual</button>
     <div class="modal-actions">
       <button class="mbtn cancel" onclick="closeImportModal()">Cancelar</button>
       <button class="mbtn primary" onclick="importData()">✓ Importar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: reconfigurar firebase -->
+<div class="modal-bg" id="modalReCfg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚙️ Configuración Firebase</div>
+    <div class="help-box" id="cfgStatus">Sin configurar</div>
+    <div class="modal-actions">
+      <button class="mbtn cancel" onclick="closeReCfgModal()">Cerrar</button>
+      <button class="mbtn primary" onclick="reconfigureFirebase()">Reconfigurar</button>
+    </div>
+    <button class="mbtn danger" onclick="disconnectFirebase()" style="font-size:13px">⚠ Desconectar y borrar config</button>
+  </div>
+</div>
+
+<!-- MODAL: editar gasto variable -->
+<div class="modal-bg" id="modalEditExp">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Editar gasto</div>
+    <div class="modal-field">
+      <div class="modal-label">Categoría</div>
+      <select id="eeCat" style="width:100%;background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;appearance:none"></select>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Monto</div>
+      <input id="eeAmt" type="number" placeholder="0" inputmode="numeric">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Descripción</div>
+      <input id="eeDesc" type="text" placeholder="Descripción (opcional)">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">¿Cómo se divide?</div>
+      <div class="div-mode-row">
+        <button class="div-mode-btn" id="eeDiv0" onclick="setEEDiv(0)">÷2<br>Compartido</button>
+        <button class="div-mode-btn" id="eeDiv1" onclick="setEEDiv(1)">Personal</button>
+        <button class="div-mode-btn" id="eeDiv2" onclick="setEEDiv(2)">100% otro</button>
+      </div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Mes</div>
+      <select id="eeMonth" style="width:100%;background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;appearance:none"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn cancel" onclick="closeEditExpModal()">Cancelar</button>
+      <button class="mbtn danger" onclick="delFromEditModal()">Eliminar</button>
+      <button class="mbtn primary" onclick="saveEditExp()">Guardar</button>
     </div>
   </div>
 </div>
@@ -323,13 +452,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
   <div class="hdr-title">Gastos 🏠</div>
-  <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+  <div class="hdr-actions">
     <div class="upill mati" id="upill" onclick="logout()">
       <div class="dot"></div>
       <span id="upillName">Mati</span>
       <span class="chg">cambiar</span>
     </div>
-    <button onclick="openImportModal()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:3px 10px;color:var(--text2);font-size:11px;cursor:pointer;font-family:DM Sans,sans-serif">📥 datos</button>
+    <button class="mini-btn" onclick="openImportModal()">📥 datos</button>
+    <button class="mini-btn" onclick="openReCfgModal()">⚙️ firebase</button>
   </div>
 </div>
 
@@ -357,18 +487,34 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
       <input class="dinput" id="descIn" type="text" placeholder="Descripción (opcional)">
     </div>
+    <div class="amt-box" style="gap:6px;padding:12px 15px">
+      <div class="modal-label">¿Cómo se divide?</div>
+      <div class="div-mode-row">
+        <button class="div-mode-btn" id="div0" onclick="setDivMode(0)">÷2<br>Compartido</button>
+        <button class="div-mode-btn" id="div1" onclick="setDivMode(1)">Personal</button>
+        <button class="div-mode-btn" id="div2" onclick="setDivMode(2)">100% otro</button>
+      </div>
+    </div>
     <div class="split-row">
       <div>
-        <div class="split-lbl">Dividir en 2</div>
-        <div class="split-sub">Gasto compartido 50/50</div>
+        <div class="split-lbl">Mes</div>
+        <div class="split-sub" id="addMonthSub">—</div>
       </div>
-      <button class="toggle on" id="splitTgl" onclick="toggleSplit()"></button>
+      <select id="addMonthSel" onchange="updAddMonthLbl()"></select>
     </div>
     <button class="sub-btn mati" id="submitBtn" onclick="addExpense()">Registrar — Mati</button>
   </div>
 
   <!-- TAB: GASTOS -->
-  <div id="tab-gastos" class="hidden elist"></div>
+  <div id="tab-gastos" class="hidden">
+    <div class="sort-bar">
+      <span class="sort-lbl">Orden:</span>
+      <button class="sort-btn active" id="sortDate" onclick="setExpSort('date')">📅 Fecha</button>
+      <button class="sort-btn" id="sortMati" onclick="setExpSort('mati')">🟣 Mati</button>
+      <button class="sort-btn" id="sortVale" onclick="setExpSort('vale')">🔴 Vale</button>
+    </div>
+    <div class="elist" id="expList"></div>
+  </div>
 
   <!-- TAB: RESUMEN -->
   <div id="tab-resumen" class="hidden rsum">
@@ -414,9 +560,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 
   <!-- TAB: FIJOS -->
-  <!-- Fijos = gastos recurrentes mensuales (arriendo, luz, agua, etc.)
-       Cada entrada es un gasto real del mes con dueño asignado.
-       Se suman al resumen igual que los variables. -->
   <div id="tab-fijos" class="hidden flist"></div>
 
 </div>
@@ -430,13 +573,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <button class="ni" onclick="showTab('fijos')"><span class="ico">📌</span>Fijos</button>
 </div>
 
-<script>
-// ═══════════════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyJ-1VOnLfim73E5ecgQ8S2EY1x7P8mszsaMkr29j1YqZaByNGdmXCFFAdVNBpe9dmR/exec';
-// OAuth replaced by Google Apps Script
+<!-- FIREBASE SDK (compat for inline JS) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
+<script>
 // ═══════════════════════════════════════════════
 // CATEGORIES
 // ═══════════════════════════════════════════════
@@ -458,8 +599,6 @@ const CATS = [
   {id:'otro',      l:'Otro',         e:'📦'},
 ];
 
-// Default fijos template — copied into each new month's fijo entries
-// Each fijo becomes a real expense entry with type:'fijo'
 const FIJOS_TEMPLATE = [
   {ic:'🏠', n:'Arriendo Depto 205',    cat:'arriendo', owner:'Mati', split:true,  amt:265000},
   {ic:'🏢', n:'DEPA CONSORCIO',        cat:'arriendo', owner:'Mati', split:true,  amt:303500},
@@ -477,17 +616,27 @@ const MN = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-// All expenses (variable + fijos) share the same array.
-// fijos have type:'fijo', variable have type:'var' (or undefined for legacy)
 let user      = localStorage.getItem('d205_user') || null;
 let expenses  = [];
 let selCat    = null;
 let splitOn   = true;
+let divMode   = 0;   // 0=compartido, 1=personal, 2=100% otro
 let selMonth  = null;
 let saveTimer = null;
 let saving    = false;
-let fallback  = false;
-let editingFijoId = null; // id of fijo entry being edited
+let editingFijoId = null;
+let editingExpId  = null;
+let eeDivMode = 0;
+let expSort   = 'date'; // 'date' | 'mati' | 'vale'
+
+// Firebase state
+let fbApp     = null;
+let fbRef     = null;          // reference to /depto205/expenses
+let fbOk      = false;         // configured & connected
+let lastWriteAt = 0;           // ts of last local write, to ignore echoes
+let localOnly = false;         // user chose to skip Firebase
+const CFG_KEY = 'd205_fbcfg_v1';
+const LOCAL_KEY = 'd205_data';
 
 // ═══════════════════════════════════════════════
 // MONTH HELPERS
@@ -497,33 +646,89 @@ function mLabel(k){
   if(!k){const d=new Date();return MN[d.getMonth()]+' '+d.getFullYear();}
   const[y,m]=k.split('-'); return MN[parseInt(m,10)-1]+' '+y;
 }
-function last3(){
-  const ks=[],d=new Date();
-  for(let i=0;i<3;i++){ks.push(mKey(d));d.setMonth(d.getMonth()-1);}
-  return ks;
+// Ventana fija de 5 meses (prev 2 + actual + next 2) — usada por selectores
+function windowMonths(){
+  const out=[];
+  const today=new Date();
+  for(let i=-2;i<=2;i++){
+    const d=new Date(today.getFullYear(),today.getMonth()+i,1);
+    out.push(mKey(d));
+  }
+  return out.sort((a,b)=>{
+    const [ay,am]=a.split('-').map(Number);
+    const [by,bm]=b.split('-').map(Number);
+    return (by*12+bm)-(ay*12+am);
+  });
 }
-function prune(arr){ const keep=new Set(last3()); return arr.filter(e=>keep.has(e.monthKey)); }
+// Lista completa: ventana + cualquier mes que tenga datos (preserva histórico)
+function monthList(){
+  const set=new Set(windowMonths());
+  expenses.forEach(e=>{ if(e.monthKey) set.add(e.monthKey); });
+  return [...set].sort((a,b)=>{
+    const [ay,am]=a.split('-').map(Number);
+    const [by,bm]=b.split('-').map(Number);
+    return (by*12+bm)-(ay*12+am);
+  });
+}
+// Alias retro-compat
+function last3(){ return monthList(); }
+// No-op: ya NO se borran datos antiguos al guardar
+function prune(arr){ return arr; }
 
 document.getElementById('monthLabel').textContent = mLabel();
 
-// Fill month selector in fijo modal
 function fillMonthSelect(){
   const sel=document.getElementById('mfMonth');
   sel.innerHTML='';
-  last3().forEach(k=>{
+  windowMonths().forEach(k=>{
     const o=document.createElement('option');
-    o.value=k; o.textContent=mLabel(k);
+    o.value=k; o.textContent=mLabel(k)+(k===mKey()?' (actual)':'');
     sel.appendChild(o);
   });
 }
 
+// Selector de mes en el tab + Agregar
+function fillAddMonthSel(){
+  const sel=document.getElementById('addMonthSel');
+  if(!sel) return;
+  const prev=sel.value;
+  sel.innerHTML='';
+  windowMonths().forEach(k=>{
+    const o=document.createElement('option');
+    o.value=k; o.textContent=mLabel(k)+(k===mKey()?' (actual)':'');
+    sel.appendChild(o);
+  });
+  sel.value=(prev && windowMonths().includes(prev))?prev:mKey();
+  updAddMonthLbl();
+}
+function updAddMonthLbl(){
+  const sel=document.getElementById('addMonthSel');
+  const sub=document.getElementById('addMonthSub');
+  if(!sel||!sub) return;
+  const k=sel.value||mKey();
+  const cur=mKey();
+  let tag='';
+  if(k===cur) tag=' — actual';
+  else {
+    const [ky,km]=k.split('-').map(Number);
+    const [cy,cm]=cur.split('-').map(Number);
+    const diff=(ky*12+km)-(cy*12+cm);
+    if(diff===-1) tag=' — mes anterior';
+    else if(diff===1) tag=' — mes próximo';
+    else if(diff<0) tag=' — hace '+Math.abs(diff)+' meses';
+    else tag=' — en '+diff+' meses';
+  }
+  sub.textContent=mLabel(k)+tag;
+}
+
 // ═══════════════════════════════════════════════
-// AUTH
+// AUTH (local user choice — Mati / Vale)
 // ═══════════════════════════════════════════════
 function login(u){
   user=u; localStorage.setItem('d205_user',u);
   document.getElementById('authScreen').style.display='none';
-  applyUser(u); loadData();
+  applyUser(u);
+  startBackend();
 }
 function logout(){
   localStorage.removeItem('d205_user'); user=null;
@@ -536,106 +741,244 @@ function applyUser(u){
   document.getElementById('submitBtn').className='sub-btn '+(u==='Mati'?'mati':'vale');
   document.getElementById('submitBtn').textContent='Registrar — '+u;
   renderCats();
+  fillAddMonthSel();
+  divMode=0; renderDivBtns();
 }
 
 // ═══════════════════════════════════════════════
-// DRIVE
+// FIREBASE CONFIG MGMT
 // ═══════════════════════════════════════════════
-function getToken(){ return true; } // GAS handles auth
-function clearToken(){ } // not needed with GAS
+function getFbConfig(){
+  try { return JSON.parse(localStorage.getItem(CFG_KEY) || 'null'); } catch(e){ return null; }
+}
+function setFbConfig(cfg){ localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); }
+function clearFbConfig(){ localStorage.removeItem(CFG_KEY); }
 
-async function driveGet(){
-  try{
-    // Use GAS with ?action=get — returns JSON with CORS headers via HTML service
-    const r = await fetch(GAS_URL + '?action=get', {
-      method: 'GET',
-      redirect: 'follow',
-      mode: 'cors',
-    });
-    if(!r.ok) return null;
-    const text = await r.text();
-    return JSON.parse(text);
-  }catch(e){
-    console.error('driveGet:', e);
-    return null;
+function openCfgScreen(prefill){
+  document.getElementById('cfgScreen').classList.add('open');
+  document.getElementById('cfgInput').value = prefill || '';
+}
+function closeCfgScreen(){ document.getElementById('cfgScreen').classList.remove('open'); }
+
+function parseFirebaseConfig(raw){
+  let txt = (raw||'').trim();
+  if(!txt) return null;
+  // Accept user pasting "const firebaseConfig = { ... };" or just "{ ... }"
+  const m = txt.match(/\{[\s\S]*\}/);
+  if(m) txt = m[0];
+  // Try JSON first
+  try { return JSON.parse(txt); } catch(e){}
+  // Try JS-style (unquoted keys, single quotes) — evaluate safely
+  try {
+    // Use Function constructor to evaluate the object literal
+    const obj = (new Function('return (' + txt + ')'))();
+    if(obj && typeof obj === 'object') return obj;
+  } catch(e){}
+  return null;
+}
+
+function saveFirebaseConfig(){
+  const raw = document.getElementById('cfgInput').value;
+  const cfg = parseFirebaseConfig(raw);
+  if(!cfg || !cfg.databaseURL || !cfg.apiKey){
+    showToast('⚠️ Config inválida: falta databaseURL o apiKey','#f87171',3500);
+    return;
   }
+  setFbConfig(cfg);
+  closeCfgScreen();
+  localOnly = false;
+  initFirebase();
 }
 
-async function drivePut(payload){
-  try{
-    const r = await fetch(GAS_URL + '?action=post', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      redirect: 'follow',
-      mode: 'cors',
-    });
-    return r.ok;
-  }catch(e){
-    console.error('drivePut:', e);
-    return false;
-  }
+function skipFirebaseConfig(){
+  localOnly = true;
+  closeCfgScreen();
+  loadLocal();
+  hideLoad();
+  showToast('💾 Modo local — toca ⚙️ firebase para conectar','#f5c542',3500);
 }
 
-// Auth replaced by Google Apps Script — no OAuth needed
-function initGIS(){ /* not needed */ }
-function startOAuth(){ loadData(); }
-function parseOAuthHash(){ return false; }
-
-function useFallback(){
-  fallback=true;
-  try{
-    const raw=localStorage.getItem('d205_data');
-    if(raw){const d=JSON.parse(raw);expenses=normalizeAll(d.expenses||[]);}
-  }catch(e){}
-  renderAll(); hideLoad();
-  showToast('💾 Modo local — configura OAuth para Drive','#f5c542',4000);
-}
-function saveFallback(){ try{localStorage.setItem('d205_data',JSON.stringify({expenses}));}catch(e){} }
-
-async function loadData(){
-  showLoad('Cargando datos de Drive…');
-  const data = await driveGet();
-  if(data){
-    expenses = prune(normalizeAll(data.expenses||[]));
-    fallback = false;
-    renderAll();
-    hideLoad();
+function openReCfgModal(){
+  const el = document.getElementById('cfgStatus');
+  if(fbOk){
+    const cfg = getFbConfig();
+    el.innerHTML = '✅ <b>Conectado</b> a <code style="color:var(--mati);font-family:DM Mono,monospace;font-size:11px">' + (cfg.databaseURL||cfg.projectId) + '</code><br><br>Sync en vivo activo. Los cambios aparecen al instante en todos los dispositivos.';
+  } else if(localOnly){
+    el.innerHTML = '💾 <b>Modo local</b> — los datos solo se guardan en este dispositivo. Toca <b>Reconfigurar</b> para conectar Firebase y compartir con Vale.';
   } else {
+    el.innerHTML = '❌ <b>Sin conexión</b> a Firebase. Toca <b>Reconfigurar</b> para pegar tu config.';
+  }
+  document.getElementById('modalReCfg').classList.add('open');
+}
+function closeReCfgModal(){ document.getElementById('modalReCfg').classList.remove('open'); }
+function reconfigureFirebase(){
+  closeReCfgModal();
+  const cfg = getFbConfig();
+  openCfgScreen(cfg ? JSON.stringify(cfg, null, 2) : '');
+}
+function disconnectFirebase(){
+  if(!confirm('¿Desconectar Firebase? Los datos en la nube no se borran, pero esta app vuelve a modo local.')) return;
+  clearFbConfig();
+  if(fbRef){ try { fbRef.off(); } catch(e){} }
+  fbApp = null; fbRef = null; fbOk = false;
+  closeReCfgModal();
+  showToast('Firebase desconectado');
+  setSyncSt('idle');
+  openCfgScreen();
+}
+
+// ═══════════════════════════════════════════════
+// FIREBASE INIT + LIVE SYNC
+// ═══════════════════════════════════════════════
+function startBackend(){
+  if(localOnly){ loadLocal(); hideLoad(); return; }
+  const cfg = getFbConfig();
+  if(!cfg){
+    // First-time setup
     hideLoad();
-    useFallback();
+    openCfgScreen();
+    return;
+  }
+  initFirebase();
+}
+
+function initFirebase(){
+  showLoad('Conectando con Firebase…');
+  const cfg = getFbConfig();
+  if(!cfg){ hideLoad(); openCfgScreen(); return; }
+
+  try {
+    // Re-init: clean previous app if any
+    try {
+      if(firebase.apps && firebase.apps.length){
+        firebase.apps.forEach(a => { try { a.delete(); } catch(e){} });
+      }
+    } catch(e){}
+
+    fbApp = firebase.initializeApp(cfg);
+    const db = firebase.database();
+    fbRef = db.ref('depto205/expenses');
+
+    // Connection state indicator
+    db.ref('.info/connected').on('value', snap => {
+      const connected = snap.val() === true;
+      if(connected){ fbOk = true; setSyncSt('live'); }
+      else { setSyncSt('err'); }
+    });
+
+    // Live listener — fires whenever data changes (from us OR Vale's device)
+    fbRef.on('value', snap => {
+      const data = snap.val();
+      const incoming = normalizeAll(snapToArray(data));
+      // Ignore echoes from our own write (within 800ms window)
+      if(Date.now() - lastWriteAt < 800){
+        return;
+      }
+      expenses = incoming;
+      saveLocalCache();
+      renderAll();
+      hideLoad();
+    }, err => {
+      console.error('Firebase listen error:', err);
+      showToast('⚠️ Error Firebase: ' + (err.message||err.code||'desconocido'),'#f87171',4500);
+      fbOk = false;
+      setSyncSt('err');
+      // Fall back to cached local data if available
+      loadLocal();
+      hideLoad();
+    });
+
+  } catch(e){
+    console.error('Firebase init error:', e);
+    showToast('⚠️ No se pudo inicializar Firebase: ' + e.message,'#f87171',4500);
+    hideLoad();
+    loadLocal();
   }
 }
 
+function snapToArray(data){
+  if(!data) return [];
+  if(Array.isArray(data)) return data.filter(x=>x);
+  if(typeof data === 'object') return Object.values(data).filter(x=>x);
+  return [];
+}
+
+function arrayToObj(arr){
+  // Use stable string IDs as keys — Firebase prefers objects over arrays with holes
+  const o = {};
+  arr.forEach(e=>{
+    const k = 'e_' + String(e.id).replace(/[.#$/\[\]]/g,'_');
+    o[k] = e;
+  });
+  return o;
+}
+
+// ═══════════════════════════════════════════════
+// LOCAL CACHE (fallback / offline)
+// ═══════════════════════════════════════════════
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(LOCAL_KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      expenses = normalizeAll(d.expenses || []);
+    }
+  }catch(e){}
+  renderAll();
+}
+function saveLocalCache(){
+  try{ localStorage.setItem(LOCAL_KEY, JSON.stringify({expenses, lastUpdated:new Date().toISOString()})); }catch(e){}
+}
+
+// ═══════════════════════════════════════════════
+// SAVE DATA — writes to Firebase if connected, else local
+// ═══════════════════════════════════════════════
 async function saveData(){
   if(saving) return;
-  if(fallback){saveFallback();return;}
-  saving=true; setSyncSt('syncing');
-  const ok=await drivePut({expenses:prune(expenses),lastUpdated:new Date().toISOString()});
-  setSyncSt(ok?'ok':'err');
-  if(ok) setTimeout(()=>setSyncSt('idle'),2500);
-  saving=false;
+  saveLocalCache();   // always save local copy first
+  if(localOnly || !fbRef){ setSyncSt(localOnly?'idle':'err'); return; }
+  saving = true;
+  setSyncSt('syncing');
+  lastWriteAt = Date.now();
+  try{
+    await fbRef.set(arrayToObj(prune(expenses)));
+    setSyncSt('live');
+  }catch(e){
+    console.error('Firebase save:', e);
+    setSyncSt('err');
+    showToast('⚠️ Error al guardar: ' + (e.message||e.code||''),'#f87171',3500);
+  }
+  saving = false;
 }
 
-function schedSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveData,700); }
+function schedSave(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
 
 async function syncNow(){
-  showLoad('Sincronizando con Drive…');
-  const data = await driveGet();
-  if(data){
-    expenses = prune(normalizeAll(data.expenses||[]));
-    fallback = false;
+  if(localOnly){ showToast('💾 Modo local — sin sync','#f5c542'); return; }
+  if(!fbRef){ openCfgScreen(); return; }
+  showLoad('Sincronizando…');
+  try{
+    const snap = await fbRef.once('value');
+    expenses = normalizeAll(snapToArray(snap.val()));
+    saveLocalCache();
     renderAll();
-    showToast('✓ Sincronizado con Drive');
-  } else {
-    showToast('⚠ Sin conexión con Drive','#f87171');
+    setSyncSt('live');
+    showToast('✓ Sincronizado');
+  }catch(e){
+    setSyncSt('err');
+    showToast('⚠️ Error: '+(e.message||e.code||''),'#f87171');
   }
   hideLoad();
 }
 
 function setSyncSt(s){
-  const b=document.getElementById('syncBtn');
-  b.className='sync-btn'+(s==='idle'?'':' '+s);
-  b.textContent=s==='syncing'?'⟳ Guardando…':s==='ok'?'✓ Guardado':s==='err'?'⚠ Error':'⟳ Sync';
+  const b = document.getElementById('syncBtn');
+  b.className = 'sync-btn' + (s==='idle' ? '' : ' '+s);
+  b.textContent = s==='syncing' ? '⟳ Guardando…'
+                : s==='ok'      ? '✓ Guardado'
+                : s==='live'    ? 'En vivo'
+                : s==='err'     ? '⚠ Sin conexión'
+                : '⟳ Sync';
 }
 
 // ═══════════════════════════════════════════════
@@ -666,8 +1009,8 @@ function reCat(desc){
 }
 
 function normalizeAll(arr){
-  return arr.map(e=>{
-    // Fix monthKey format
+  return (arr||[]).map(e=>{
+    if(!e || typeof e!=='object') return null;
     if(e.monthKey){
       const[y,m]=String(e.monthKey).split('-');
       e.monthKey=y+'-'+parseInt(m,10);
@@ -675,21 +1018,20 @@ function normalizeAll(arr){
       const dash=String(e.month).match(/^(\d{4})-(\d{1,2})$/);
       if(dash) e.monthKey=dash[1]+'-'+parseInt(dash[2],10);
       else{
-        const txt=String(e.month).match(/([A-Za-z\u00C0-\u024F]+)\s+(\d{4})/);
+        const txt=String(e.month).match(/([A-Za-zÀ-ɏ]+)\s+(\d{4})/);
         if(txt){const mi=MN.findIndex(n=>n.toLowerCase()===txt[1].toLowerCase());if(mi>=0)e.monthKey=txt[2]+'-'+(mi+1);}
       }
     }
     if(!e.monthKey) e.monthKey=mKey();
-    // Re-categorize
-    if(e.desc){const c=reCat(e.desc);e.cat=c.id;e.cl=c.l;e.ce=c.e;}
-    // Ensure type
+    if(e.desc && (!e.cat || e.cat==='otro')){const c=reCat(e.desc);if(c.id!=='otro'){e.cat=c.id;e.cl=c.l;e.ce=c.e;}}
     if(!e.type) e.type='var';
+    if(!e.id) e.id = Date.now() + Math.random();
     return e;
-  });
+  }).filter(Boolean);
 }
 
 // ═══════════════════════════════════════════════
-// CATEGORIES
+// CATEGORIES UI
 // ═══════════════════════════════════════════════
 function renderCats(){
   document.getElementById('catGrid').innerHTML=CATS.map(c=>
@@ -698,7 +1040,22 @@ function renderCats(){
   ).join('');
 }
 function selCatFn(id){selCat=id;renderCats();}
-function toggleSplit(){splitOn=!splitOn;document.getElementById('splitTgl').className='toggle'+(splitOn?' on':'');}
+
+function setDivMode(m){divMode=m;renderDivBtns();}
+function renderDivBtns(){
+  const isM=user==='Mati';
+  const other=isM?'Vale':'Mati';
+  const uc=isM?'':'v';
+  const ouc=isM?'v':'';
+  const b0=document.getElementById('div0');
+  const b1=document.getElementById('div1');
+  const b2=document.getElementById('div2');
+  if(!b0) return;
+  b0.className='div-mode-btn'+(divMode===0?' dm-shared':'');
+  b1.className='div-mode-btn'+(divMode===1?' dm-me '+uc:'');
+  b2.className='div-mode-btn'+(divMode===2?' dm-other '+ouc:'');
+  b2.innerHTML='100% de<br>'+other;
+}
 
 // ═══════════════════════════════════════════════
 // ADD VARIABLE EXPENSE
@@ -706,22 +1063,31 @@ function toggleSplit(){splitOn=!splitOn;document.getElementById('splitTgl').clas
 function addExpense(){
   const a=parseFloat(document.getElementById('amtIn').value);
   const d=document.getElementById('descIn').value.trim();
+  const mk=document.getElementById('addMonthSel').value||mKey();
   if(!selCat){showToast('⚠️ Selecciona una categoría','#f5c542');return;}
   if(!a||a<=0){showToast('⚠️ Ingresa un monto válido','#f5c542');return;}
   const cat=CATS.find(c=>c.id===selCat);
   const now=new Date();
+  // Si el gasto va a un mes ≠ actual, la fecha visible refleja el 1° de ese mes
+  const dateLabel = mk===mKey()
+    ? now.toLocaleDateString('es-CL',{day:'numeric',month:'short'})
+    : '1 '+MN[parseInt(mk.split('-')[1],10)-1].toLowerCase().slice(0,3);
+  const other=user==='Mati'?'Vale':'Mati';
   expenses.unshift({
     id:Date.now()+Math.random(), type:'var',
     user, cat:cat.id, cl:cat.l, ce:cat.e,
-    amount:a, desc:d, split:splitOn,
-    monthKey:mKey(), date:now.toLocaleDateString('es-CL',{day:'numeric',month:'short'}),
+    amount:a, desc:d,
+    split:divMode===0,
+    beneficiary:divMode===2?other:null,
+    monthKey:mk, date:dateLabel,
     ts:now.toISOString(),
   });
   document.getElementById('amtIn').value='';
   document.getElementById('descIn').value='';
-  selCat=null; renderCats();
-  schedSave(); renderExpenses(); renderSummary();
-  showToast('✓ Gasto registrado');
+  selCat=null; divMode=0; renderCats(); renderDivBtns();
+  schedSave(); renderExpenses(); renderSummary(); renderFijos();
+  const where = mk===mKey() ? '' : ' en '+mLabel(mk);
+  showToast('✓ Gasto registrado'+where);
 }
 
 // ═══════════════════════════════════════════════
@@ -738,27 +1104,49 @@ function showTab(n){
 }
 
 // ═══════════════════════════════════════════════
-// EXPENSES LIST — variables + fijos together
+// EXPENSES LIST
 // ═══════════════════════════════════════════════
+function setExpSort(s){
+  expSort=s;
+  ['sortDate','sortMati','sortVale'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b) b.classList.toggle('active', id==='sort'+s.charAt(0).toUpperCase()+s.slice(1));
+  });
+  renderExpenses();
+}
+
 function renderExpenses(){
-  const el=document.getElementById('tab-gastos');
-  const months=last3();
+  const el=document.getElementById('expList');
+  if(!el) return;
+  const months=monthList();
   let html='';
   months.forEach(mk=>{
-    const list=expenses.filter(e=>e.monthKey===mk).sort((a,b)=>{
-      // fijos first, then by ts desc
+    let list=expenses.filter(e=>e.monthKey===mk);
+    // filtro por persona si aplica
+    if(expSort==='mati') list=list.filter(e=>e.user==='Mati');
+    else if(expSort==='vale') list=list.filter(e=>e.user==='Vale');
+    // ordenar
+    list=list.sort((a,b)=>{
       if(a.type==='fijo'&&b.type!=='fijo') return -1;
       if(b.type==='fijo'&&a.type!=='fijo') return 1;
       return (b.ts||'')>(a.ts||'') ? 1 : -1;
     });
+    if(!list.length) return;
     html+=`<div class="mg-title">${mLabel(mk)}<div class="mg-line"></div></div>`;
-    if(!list.length){html+='<div style="padding:4px 0 10px;color:var(--text2);font-size:13px">Sin gastos</div>';return;}
     html+=list.map(e=>{
       const isFijo=e.type==='fijo';
       const uc=e.user==='Mati'?'m':'v';
-      const tagHtml=isFijo
-        ?`<span class="etag fj">fijo</span>`
-        :`<span class="etag ${e.split?'sp':'so'}">${e.split?'÷2':'personal'}</span>`;
+      let tagHtml;
+      if(isFijo){
+        tagHtml=`<span class="etag fj">fijo</span>`;
+      } else if(e.beneficiary && e.beneficiary!==e.user){
+        tagHtml=`<span class="etag so">100% ${e.beneficiary}</span>`;
+      } else {
+        tagHtml=`<span class="etag ${e.split?'sp':'so'}">${e.split?'÷2':'personal'}</span>`;
+      }
+      const editBtn=!isFijo
+        ?`<button class="editbtn" onclick="openEditExpModal(${JSON.stringify(e.id)})">editar</button>`
+        :'';
       return `<div class="eitem${isFijo?' fijo-item':''}">
         <div class="eicon ${uc}">${e.ce||'📦'}</div>
         <div class="einfo">
@@ -769,6 +1157,7 @@ function renderExpenses(){
           <div class="eamt ${uc}">$${fmt(e.amount)}</div>
           ${tagHtml}
         </div>
+        ${editBtn}
         <button class="delbtn" onclick="delExp(${JSON.stringify(e.id)})">✕</button>
       </div>`;
     }).join('');
@@ -782,25 +1171,30 @@ function delExp(id){
 }
 
 // ═══════════════════════════════════════════════
-// SUMMARY — fijos + variables together per month
+// SUMMARY
 // ═══════════════════════════════════════════════
 function calcMonth(mk){
-  // ALL expenses of this month: both type=var and type=fijo
   const exps=expenses.filter(e=>e.monthKey===mk);
   let mP=0,vP=0,mShare=0,vShare=0;
   exps.forEach(e=>{
     const a=e.amount;
     if(e.user==='Mati') mP+=a; else vP+=a;
-    if(e.split){mShare+=a/2;vShare+=a/2;}
-    else{if(e.user==='Mati')mShare+=a;else vShare+=a;}
+    if(e.beneficiary && e.beneficiary!==e.user){
+      // 100% del otro: quien pagó no debe nada, el otro absorbe todo
+      if(e.beneficiary==='Mati') mShare+=a; else vShare+=a;
+    } else if(e.split){
+      mShare+=a/2; vShare+=a/2;
+    } else {
+      if(e.user==='Mati') mShare+=a; else vShare+=a;
+    }
   });
-  const mDiff=mP-mShare; // >0 = Mati pagó de más → Vale le debe
+  const mDiff=mP-mShare;
   const vDiff=vP-vShare;
   return{exps,mP,vP,mShare,vShare,mDiff,vDiff,total:mP+vP};
 }
 
 function renderSummary(){
-  const months=last3();
+  const months=monthList();
   if(!selMonth||!months.includes(selMonth)) selMonth=months[0];
   document.getElementById('mtabs').innerHTML=months.map(m=>
     `<button class="mtab${m===selMonth?' active':''}" onclick="selM('${m}')">${mLabel(m)}</button>`
@@ -809,7 +1203,6 @@ function renderSummary(){
   const varExps=exps.filter(e=>e.type!=='fijo');
   const fijoExps=exps.filter(e=>e.type==='fijo');
 
-  // Balance card
   const bAEl=document.getElementById('bAmt');
   const bOwes=document.getElementById('bOwes');
   const bDesc=document.getElementById('bDesc');
@@ -831,7 +1224,6 @@ function renderSummary(){
     bDesc.textContent=`Vale adelantó $${fmt(absD)} de más`;
   }
 
-  // Stats
   document.getElementById('mPaid').textContent='$'+fmt(mP);
   document.getElementById('vPaid').textContent='$'+fmt(vP);
   document.getElementById('mOwes').textContent='$'+fmt(mShare);
@@ -845,7 +1237,6 @@ function renderSummary(){
   vDE.className='sval '+(Math.abs(vDiff)<500?'zer':vDiff>0?'pos':'neg');
   document.getElementById('vDiffLbl').textContent=vDiff>0?'adelantó ↑':vDiff<0?'debe ↓':'al día';
 
-  // Cierre detallado
   const mFixed=fijoExps.filter(e=>e.user==='Mati').reduce((s,e)=>s+e.amount,0);
   const vFixed=fijoExps.filter(e=>e.user==='Vale').reduce((s,e)=>s+e.amount,0);
   const mVar=varExps.filter(e=>e.user==='Mati').reduce((s,e)=>s+e.amount,0);
@@ -879,7 +1270,6 @@ function renderSummary(){
     document.getElementById('cierreVal').className='cierre-footer-val '+cls;
   }
 
-  // Breakdown por categoría (todos)
   const byc={};
   exps.forEach(e=>{
     if(!byc[e.cat]) byc[e.cat]={l:e.cl||e.cat,e:e.ce||'📦',t:0};
@@ -894,11 +1284,11 @@ function renderSummary(){
 function selM(m){selMonth=m;renderSummary();}
 
 // ═══════════════════════════════════════════════
-// FIJOS TAB — gestión de gastos fijos por mes
+// FIJOS TAB
 // ═══════════════════════════════════════════════
 function renderFijos(){
   const el=document.getElementById('tab-fijos');
-  const months=last3();
+  const months=monthList();
   let html='';
 
   months.forEach(mk=>{
@@ -910,7 +1300,6 @@ function renderFijos(){
     </div>`;
 
     if(!fijoList.length){
-      // Find previous month to show in button label
       const [fy, fm] = mk.split('-').map(Number);
       const prevMk2 = mKey(new Date(fy, fm - 2, 1));
       const hasPrev = expenses.some(e => e.monthKey === prevMk2 && e.type === 'fijo');
@@ -937,7 +1326,6 @@ function renderFijos(){
           <button class="fedit-btn" onclick="openFijoModal(${JSON.stringify(e.id)})">editar</button>
         </div>`;
       }).join('');
-      // Total card for this month
       const mFijos=fijoList.filter(e=>e.user==='Mati').reduce((s,e)=>s+e.amount,0);
       const vFijos=fijoList.filter(e=>e.user==='Vale').reduce((s,e)=>s+e.amount,0);
       html+=`<div class="ftotal-card">
@@ -955,18 +1343,15 @@ function renderFijos(){
   el.innerHTML=html||'<div class="empty"><div class="big">📌</div><p>Sin fijos</p></div>';
 }
 
-// Load fijos into a month — copies from previous month if available, else uses template
 function loadFijosTemplate(mk){
-  // Find the previous month key
   const [y, m] = mk.split('-').map(Number);
-  const prevDate = new Date(y, m - 2, 1); // month is 0-indexed, go back one
+  const prevDate = new Date(y, m - 2, 1);
   const prevMk = mKey(prevDate);
 
   const prevFijos = expenses.filter(e => e.monthKey === prevMk && e.type === 'fijo');
   const ts = new Date().toISOString();
 
   if(prevFijos.length > 0){
-    // Copy from previous month with fresh IDs and new monthKey
     prevFijos.forEach((e, i) => {
       expenses.push({
         ...e,
@@ -978,7 +1363,6 @@ function loadFijosTemplate(mk){
     });
     showToast('✓ Fijos copiados de ' + mLabel(prevMk));
   } else {
-    // No previous month data — fall back to default template
     FIJOS_TEMPLATE.forEach((t, i) => {
       const cat = CATS.find(c => c.id === t.cat) || {id:'otro', l:'Otro', e:'📦'};
       expenses.push({
@@ -993,7 +1377,6 @@ function loadFijosTemplate(mk){
   schedSave(); renderFijos(); renderSummary();
 }
 
-// ── Fijo modal ──
 function openFijoModalNew(mk){
   editingFijoId=null;
   fillMonthSelect();
@@ -1041,7 +1424,7 @@ function saveFijoEntry(){
   const cat=reCat(n);
   if(editingFijoId){
     const idx=expenses.findIndex(x=>x.id===editingFijoId);
-    if(idx>-1) expenses[idx]={...expenses[idx],ce:ic,desc:n,cl:cat.l,cat:cat.id,ce:ic,amount:a,user:owner,split,monthKey:mk};
+    if(idx>-1) expenses[idx]={...expenses[idx],ce:ic,desc:n,cl:cat.l,cat:cat.id,amount:a,user:owner,split,monthKey:mk};
   } else {
     expenses.push({
       id:Date.now()+Math.random(), type:'fijo',
@@ -1064,6 +1447,92 @@ function deleteFijoEntry(){
 document.getElementById('modalFijo').addEventListener('click',function(e){if(e.target===this)closeFijoModal();});
 
 // ═══════════════════════════════════════════════
+// EDIT VARIABLE EXPENSE MODAL
+// ═══════════════════════════════════════════════
+function fillEECatSelect(selId){
+  const s=document.getElementById('eeCat');
+  s.innerHTML=CATS.map(c=>`<option value="${c.id}"${c.id===selId?' selected':''}>${c.e} ${c.l}</option>`).join('');
+}
+function fillEEMonthSelect(selMk){
+  const s=document.getElementById('eeMonth');
+  s.innerHTML='';
+  windowMonths().forEach(k=>{
+    const o=document.createElement('option');
+    o.value=k; o.textContent=mLabel(k)+(k===mKey()?' (actual)':'');
+    if(k===selMk) o.selected=true;
+    s.appendChild(o);
+  });
+  // add current expense month if outside window
+  if(selMk && !windowMonths().includes(selMk)){
+    const o=document.createElement('option');
+    o.value=selMk; o.textContent=mLabel(selMk); o.selected=true;
+    s.insertBefore(o,s.firstChild);
+  }
+}
+function setEEDiv(m){
+  eeDivMode=m;
+  const exp=expenses.find(x=>x.id===editingExpId);
+  const expUser=exp?exp.user:user;
+  const other=expUser==='Mati'?'Vale':'Mati';
+  const uc=expUser==='Mati'?'':'v';
+  const ouc=expUser==='Mati'?'v':'';
+  const b0=document.getElementById('eeDiv0');
+  const b1=document.getElementById('eeDiv1');
+  const b2=document.getElementById('eeDiv2');
+  b0.className='div-mode-btn'+(m===0?' dm-shared':'');
+  b1.className='div-mode-btn'+(m===1?' dm-me '+uc:'');
+  b2.className='div-mode-btn'+(m===2?' dm-other '+ouc:'');
+  b2.innerHTML='100% de<br>'+other;
+}
+function openEditExpModal(id){
+  editingExpId=id;
+  const e=expenses.find(x=>x.id===id);
+  if(!e) return;
+  fillEECatSelect(e.cat);
+  fillEEMonthSelect(e.monthKey);
+  document.getElementById('eeAmt').value=e.amount;
+  document.getElementById('eeDesc').value=e.desc||'';
+  const other=e.user==='Mati'?'Vale':'Mati';
+  eeDivMode = e.beneficiary && e.beneficiary!==e.user ? 2 : (e.split ? 0 : 1);
+  setEEDiv(eeDivMode);
+  document.getElementById('modalEditExp').classList.add('open');
+}
+function closeEditExpModal(){
+  document.getElementById('modalEditExp').classList.remove('open');
+  editingExpId=null;
+}
+function saveEditExp(){
+  const idx=expenses.findIndex(x=>x.id===editingExpId);
+  if(idx<0) return;
+  const a=parseFloat(document.getElementById('eeAmt').value);
+  if(!a||a<=0){showToast('⚠️ Monto inválido','#f5c542');return;}
+  const catId=document.getElementById('eeCat').value;
+  const cat=CATS.find(c=>c.id===catId)||{id:'otro',l:'Otro',e:'📦'};
+  const desc=document.getElementById('eeDesc').value.trim();
+  const mk=document.getElementById('eeMonth').value;
+  const expUser=expenses[idx].user;
+  const other=expUser==='Mati'?'Vale':'Mati';
+  expenses[idx]={
+    ...expenses[idx],
+    cat:cat.id, cl:cat.l, ce:cat.e,
+    amount:a, desc, monthKey:mk,
+    split:eeDivMode===0,
+    beneficiary:eeDivMode===2?other:null,
+  };
+  closeEditExpModal();
+  schedSave(); renderExpenses(); renderSummary();
+  showToast('✓ Gasto actualizado');
+}
+function delFromEditModal(){
+  if(!editingExpId) return;
+  expenses=expenses.filter(x=>x.id!==editingExpId);
+  closeEditExpModal();
+  schedSave(); renderExpenses(); renderSummary();
+  showToast('Gasto eliminado');
+}
+document.getElementById('modalEditExp').addEventListener('click',function(e){if(e.target===this)closeEditExpModal();});
+
+// ═══════════════════════════════════════════════
 // IMPORT / EXPORT
 // ═══════════════════════════════════════════════
 function openImportModal(){document.getElementById('importTA').value='';document.getElementById('modalImport').classList.add('open');}
@@ -1073,7 +1542,10 @@ function importData(){
   if(!raw){showToast('⚠️ Pega el JSON primero','#f5c542');return;}
   try{
     const d=JSON.parse(raw);
-    if(d.expenses){expenses=normalizeAll(d.expenses);showToast('✓ '+expenses.length+' gastos importados');}
+    if(d.expenses){
+      expenses=normalizeAll(d.expenses);
+      showToast('✓ '+expenses.length+' gastos importados — sincronizando…');
+    }
     schedSave(); renderAll(); closeImportModal();
   }catch(e){showToast('⚠️ JSON inválido','#f87171');}
 }
@@ -1084,12 +1556,13 @@ function exportData(){
     .catch(()=>{document.getElementById('importTA').value=json;showToast('Copia el texto del área','#f5c542',4000);});
 }
 document.getElementById('modalImport').addEventListener('click',function(e){if(e.target===this)closeImportModal();});
+document.getElementById('modalReCfg').addEventListener('click',function(e){if(e.target===this)closeReCfgModal();});
 
 // ═══════════════════════════════════════════════
 // RENDER ALL
 // ═══════════════════════════════════════════════
 function renderAll(){
-  renderCats(); renderExpenses(); renderFijos();
+  renderCats(); fillAddMonthSel(); renderExpenses(); renderFijos();
   const rTab=document.getElementById('tab-resumen');
   if(rTab&&!rTab.classList.contains('hidden')) renderSummary();
 }
@@ -1114,7 +1587,11 @@ function showToast(msg,color,dur){
 // ═══════════════════════════════════════════════
 // STARTUP
 // ═══════════════════════════════════════════════
-if(user){document.getElementById('authScreen').style.display='none';applyUser(user);loadData();}
+if(user){
+  document.getElementById('authScreen').style.display='none';
+  applyUser(user);
+  startBackend();
+}
 </script>
 </body>
 </html>
