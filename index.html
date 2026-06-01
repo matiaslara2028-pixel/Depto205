@@ -162,6 +162,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .sort-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surf);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
 .sort-btn.active{background:var(--surf2);border-color:var(--mati);color:var(--text)}
 
+/* ── MONTH COLLAPSIBLE ── */
+.mg-title{cursor:pointer;user-select:none;display:flex;align-items:center;gap:10px}
+.mg-title:hover{opacity:.8}
+.mg-chevron{font-size:10px;color:var(--text2);transition:transform .2s;flex-shrink:0}
+.mg-chevron.open{transform:rotate(90deg)}
+.mg-body{overflow:hidden;transition:max-height .25s ease}
+.mg-body.collapsed{max-height:0!important}
+
 /* ── RESUMEN ── */
 .rsum{display:flex;flex-direction:column;gap:12px}
 .mtabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
@@ -1115,38 +1123,50 @@ function setExpSort(s){
   renderExpenses();
 }
 
+// Track which months are expanded in gastos tab
+const expandedMonths = new Set([mKey()]);
+
+function toggleMonthSection(mk){
+  if(expandedMonths.has(mk)) expandedMonths.delete(mk);
+  else expandedMonths.add(mk);
+  // toggle DOM directly without full re-render
+  const body=document.getElementById('mgbody-'+mk);
+  const chev=document.getElementById('mgchev-'+mk);
+  if(!body||!chev) return;
+  const open=expandedMonths.has(mk);
+  if(open){ body.style.maxHeight=body.scrollHeight+'px'; body.classList.remove('collapsed'); }
+  else { body.style.maxHeight='0'; body.classList.add('collapsed'); }
+  chev.classList.toggle('open', open);
+}
+
 function renderExpenses(){
   const el=document.getElementById('expList');
   if(!el) return;
   const months=monthList();
   let html='';
+  let hasAny=false;
   months.forEach(mk=>{
     let list=expenses.filter(e=>e.monthKey===mk);
-    // filtro por persona si aplica
     if(expSort==='mati') list=list.filter(e=>e.user==='Mati');
     else if(expSort==='vale') list=list.filter(e=>e.user==='Vale');
-    // ordenar
     list=list.sort((a,b)=>{
       if(a.type==='fijo'&&b.type!=='fijo') return -1;
       if(b.type==='fijo'&&a.type!=='fijo') return 1;
       return (b.ts||'')>(a.ts||'') ? 1 : -1;
     });
     if(!list.length) return;
-    html+=`<div class="mg-title">${mLabel(mk)}<div class="mg-line"></div></div>`;
-    html+=list.map(e=>{
+    hasAny=true;
+    const isOpen=expandedMonths.has(mk);
+    const isCurrent=mk===mKey();
+    const countTxt=list.length+' gasto'+(list.length!==1?'s':'');
+    const itemsHtml=list.map(e=>{
       const isFijo=e.type==='fijo';
       const uc=e.user==='Mati'?'m':'v';
       let tagHtml;
-      if(isFijo){
-        tagHtml=`<span class="etag fj">fijo</span>`;
-      } else if(e.beneficiary && e.beneficiary!==e.user){
-        tagHtml=`<span class="etag so">100% ${e.beneficiary}</span>`;
-      } else {
-        tagHtml=`<span class="etag ${e.split?'sp':'so'}">${e.split?'÷2':'personal'}</span>`;
-      }
-      const editBtn=!isFijo
-        ?`<button class="editbtn" onclick="openEditExpModal(${JSON.stringify(e.id)})">editar</button>`
-        :'';
+      if(isFijo) tagHtml=`<span class="etag fj">fijo</span>`;
+      else if(e.beneficiary&&e.beneficiary!==e.user) tagHtml=`<span class="etag so">100% ${e.beneficiary}</span>`;
+      else tagHtml=`<span class="etag ${e.split?'sp':'so'}">${e.split?'÷2':'personal'}</span>`;
+      const editBtn=!isFijo?`<button class="editbtn" onclick="openEditExpModal(${JSON.stringify(e.id)})">editar</button>`:'';
       return `<div class="eitem${isFijo?' fijo-item':''}">
         <div class="eicon ${uc}">${e.ce||'📦'}</div>
         <div class="einfo">
@@ -1161,8 +1181,23 @@ function renderExpenses(){
         <button class="delbtn" onclick="delExp(${JSON.stringify(e.id)})">✕</button>
       </div>`;
     }).join('');
+
+    const headerExtra = isCurrent
+      ? `<span style="font-size:10px;background:rgba(124,111,255,.18);color:var(--mati);padding:2px 8px;border-radius:10px;font-weight:700">actual</span>`
+      : `<span style="font-size:10px;color:var(--text2)">${countTxt}</span>`;
+
+    html+=`
+      <div class="mg-title" onclick="toggleMonthSection('${mk}')">
+        <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2)">${mLabel(mk)}</span>
+        ${headerExtra}
+        <div class="mg-line"></div>
+        <span class="mg-chevron${isOpen?' open':''}" id="mgchev-${mk}">▶</span>
+      </div>
+      <div class="mg-body${isOpen?'':' collapsed'}" id="mgbody-${mk}" style="max-height:${isOpen?'9999px':'0'}">
+        <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:8px">${itemsHtml}</div>
+      </div>`;
   });
-  el.innerHTML=html||'<div class="empty"><div class="big">📋</div><p>Sin gastos</p></div>';
+  el.innerHTML=hasAny?html:'<div class="empty"><div class="big">📋</div><p>Sin gastos</p></div>';
 }
 
 function delExp(id){
