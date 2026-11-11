@@ -32,6 +32,7 @@ input::placeholder,textarea::placeholder{color:#44445a}
 /* ── MODAL ── */
 .modal-bg{position:fixed;inset:0;background:rgba(5,5,10,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:400;display:none;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex;animation:fadeIn .2s ease}
+#modalConfirm{z-index:420}
 .modal{background:var(--surf);border:1px solid var(--line2);border-bottom:none;border-radius:28px 28px 0 0;width:100%;max-width:460px;padding:14px 20px 34px;display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow-y:auto;animation:sheetUp .28s cubic-bezier(.2,.9,.3,1)}
 @keyframes sheetUp{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -598,6 +599,20 @@ input::placeholder,textarea::placeholder{color:#44445a}
   <!-- TAB: FIJOS -->
   <div id="tab-fijos" class="hidden flist"></div>
 
+</div>
+
+<!-- MODAL: confirmar eliminación -->
+<div class="modal-bg" id="modalConfirm">
+  <div class="modal" style="text-align:center">
+    <div class="modal-handle"></div>
+    <div style="font-size:34px;margin-top:4px">🗑️</div>
+    <div class="modal-title" id="cfmTitle">¿Eliminar gasto?</div>
+    <div id="cfmBody" style="font-size:14px;color:var(--text3);line-height:1.5;margin-top:-4px"></div>
+    <div class="modal-actions">
+      <button class="mbtn cancel" onclick="closeConfirm()">Cancelar</button>
+      <button class="mbtn danger" id="cfmOk" style="background:var(--red);color:#fff;border:none">Eliminar</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1253,9 +1268,30 @@ function renderExpenses(){
   el.innerHTML=hasAny?html:'<div class="empty"><div class="big">📋</div><p>Sin gastos</p></div>';
 }
 
+// ═══════════════════════════════════════════════
+// CONFIRMAR ELIMINACIÓN
+// ═══════════════════════════════════════════════
+let _cfmCb=null;
+function askDelete(id, cb){
+  const e=expenses.find(x=>x.id===id);
+  const what=e?(e.desc||e.cl||'este gasto'):'este gasto';
+  document.getElementById('cfmTitle').textContent=(e&&e.type==='fijo')?'¿Eliminar gasto fijo?':'¿Eliminar gasto?';
+  document.getElementById('cfmBody').innerHTML=e
+    ?`<b style="color:var(--text)">${what}</b> · $${fmt(e.amount)}<br>${e.user} · ${mLabel(e.monthKey)}<br><span style="font-size:12px;color:var(--text2)">Se borra también para ${e.user==='Mati'?'Vale':'Mati'}. No se puede deshacer.</span>`
+    :'No se puede deshacer.';
+  _cfmCb=cb;
+  document.getElementById('modalConfirm').classList.add('open');
+}
+function closeConfirm(){ document.getElementById('modalConfirm').classList.remove('open'); _cfmCb=null; }
+document.getElementById('cfmOk').addEventListener('click',()=>{ const cb=_cfmCb; closeConfirm(); if(cb) cb(); });
+document.getElementById('modalConfirm').addEventListener('click',function(e){ if(e.target===this) closeConfirm(); });
+
 function delExp(id){
-  expenses=expenses.filter(e=>e.id!==id);
-  schedSave(); renderExpenses(); renderSummary();
+  askDelete(id, ()=>{
+    expenses=expenses.filter(e=>e.id!==id);
+    schedSave(); renderExpenses(); renderSummary(); renderFijos();
+    showToast('Gasto eliminado');
+  });
 }
 
 // ═══════════════════════════════════════════════
@@ -1527,9 +1563,12 @@ function saveFijoEntry(){
 
 function deleteFijoEntry(){
   if(!editingFijoId) return;
-  expenses=expenses.filter(x=>x.id!==editingFijoId);
-  closeFijoModal(); schedSave(); renderFijos(); renderSummary(); renderExpenses();
-  showToast('Fijo eliminado');
+  const id=editingFijoId;
+  askDelete(id, ()=>{
+    expenses=expenses.filter(x=>x.id!==id);
+    closeFijoModal(); schedSave(); renderFijos(); renderSummary(); renderExpenses();
+    showToast('Fijo eliminado');
+  });
 }
 
 document.getElementById('modalFijo').addEventListener('click',function(e){if(e.target===this)closeFijoModal();});
@@ -1613,10 +1652,13 @@ function saveEditExp(){
 }
 function delFromEditModal(){
   if(!editingExpId) return;
-  expenses=expenses.filter(x=>x.id!==editingExpId);
-  closeEditExpModal();
-  schedSave(); renderExpenses(); renderSummary();
-  showToast('Gasto eliminado');
+  const id=editingExpId;
+  askDelete(id, ()=>{
+    expenses=expenses.filter(x=>x.id!==id);
+    closeEditExpModal();
+    schedSave(); renderExpenses(); renderSummary();
+    showToast('Gasto eliminado');
+  });
 }
 document.getElementById('modalEditExp').addEventListener('click',function(e){if(e.target===this)closeEditExpModal();});
 
